@@ -1,8 +1,12 @@
 @import "tailwindcss";
+@import "../node_modules/sweetalert2/dist/sweetalert2.css";
+@source "../node_modules/flowbite";
+@plugin "flowbite/plugin";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  font-family: var(--font-prompt), sans-serif;
 }
 
 @theme inline {
@@ -17,6 +21,10 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+.font-prompt {
+  font-family: var(--font-prompt), sans-serif;
 }
 
 body {
