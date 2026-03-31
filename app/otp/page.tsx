@@ -116,7 +116,7 @@ export default function Login() {
           {t('confirm_otp')}
         </h1>
         <p className="text-gray-600 font-prompt mt-2 mb-6 text-center text-sm">
-          {t('text_confirm_otp', { phone: data.phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1***$3') })}
+          {t('text_confirm_otp', { phone: data.phone?.replace(/(\d{3})(\d{3})(\d{4})/, '$1***$3') })}
         </p>
         {/* input OTP - start */}
         <input
