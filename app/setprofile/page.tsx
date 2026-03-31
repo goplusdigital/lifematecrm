@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation'
 
 export default async function Register() {
   const token = (await cookies()).get('token')?.value
+  console.log('token', token);
 
   // check is registered
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/profile`, {

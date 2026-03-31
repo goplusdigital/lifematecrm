@@ -6,7 +6,7 @@ export async function POST() {
   // 🔥 ลบ cookie
   res.cookies.set('token', '', {
     httpOnly: true,
-    secure: true,
+    // secure: true,
     path: '/',
     maxAge: 0, // สำคัญ
   })

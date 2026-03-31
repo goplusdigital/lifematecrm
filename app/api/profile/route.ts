@@ -11,7 +11,7 @@ export const runtime = 'nodejs'
 
 export async function GET(req: Request) {
   try {
-    const token = (await cookies()).get('token')?.value
+    const token : any = (await cookies()).get('token')?.value
     let authToken : any;
     
     // 👉 ถ้าใช้ Authorization header แทน ก็อ่านจาก req.headers.get('Authorization') มาแทน
@@ -28,6 +28,9 @@ export async function GET(req: Request) {
     if (!token && !authToken) {
       return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
     }
+    if(authToken=="undefined") {
+      authToken = null
+    }
 
     // if (authToken != token) {
     //     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
@@ -35,10 +38,10 @@ export async function GET(req: Request) {
     // ✅ 2. verify JWT
     let payload: any
     try {
-      const result = await jwtVerify(authToken, secret)
+      const result = await jwtVerify(authToken || token, secret)
       payload = result.payload
     } catch (err) {
-      return NextResponse.json({ error: 'invalid token' }, { status: 401 })
+      return NextResponse.json({ error: 'invalid token' , token : token , authToken}, { status: 401 })
     }
 
     // ✅ 3. ดึงข้อมูลจาก token

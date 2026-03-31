@@ -5,13 +5,14 @@ import { jwtVerify } from 'jose'
 import { redirect } from 'next/navigation'
 import LoadFail from './fail'
 import { AuthProvider } from './authcontext'
+import Menubar from './menubar'
 
 
 
 export default async function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
     const token = (await cookies()).get('token')?.value
 
@@ -42,5 +43,14 @@ export default async function RootLayout({
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
     const { payload } = await jwtVerify(token, secret)
     const phone = payload.phone_no
-    return <AuthProvider user={{ phone }} token={token}>{children}</AuthProvider>
+    return <AuthProvider user={{ phone }} token={token}>
+        <div className="flex flex-col h-dvh w-full overflow-hidden bg-[#E8E8E8] justify-start vertical-top">
+            <main className="flex-1 overflow-y-auto text-gray-600 font-prompt text-xs leading-relaxed">
+                <div className="space-y-4">
+                    {children}
+                </div>
+            </main>
+            <Menubar />
+        </div>
+    </AuthProvider>
 }

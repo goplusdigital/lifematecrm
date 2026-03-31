@@ -67,10 +67,10 @@ export async function POST(req: Request) {
     
 
     const token = await signToken({ phone_no: phone_no_string });
-    const res = NextResponse.json({ success: true });
+    const res = NextResponse.json({ success: true, token });
     res.cookies.set("token", token, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       path: "/",
       maxAge: 60 * 60 * 24 * 180, // 180 days
     });
