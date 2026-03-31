@@ -27,7 +27,7 @@ export default function Privilege() {
 
 
       </div>
-      <div className="w-full relative">
+      <div className="w-full relative mb-35">
         <div className="absolute w-full -top-10 left-0 px-5">
           <div className="flex flex-col w-full text-gray-800 font-prompt bg-[#ffffff] px-4 py-6 rounded-lg shadow-md ">
             <div className="flex flex-row w-full justify-between mb-2">
@@ -63,6 +63,31 @@ export default function Privilege() {
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex-1 p-5 gap-4 bg-[#E8E8E8]">
+        <h2 className="text-lg font-bold font-prompt text-gray-800 mb-4">สิทธิพิเศษของคุณ</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* สิทธิพิเศษ 1 */}
+          <div className="bg-[#ffffff] p-4 rounded-lg shadow-md">
+            <h3 className="text-md font-bold font-prompt text-gray-800 mb-2">ส่วนลด 10% สำหรับการซื้อครั้งถัดไป</h3>
+            <p className="text-gray-600 font-prompt text-sm">ใช้รหัสส่วนลด: WELCOME10 เมื่อชำระเงิน</p>
+          </div>
+          {/* สิทธิพิเศษ 2 */}
+          <div className="bg-[#ffffff] p-4 rounded-lg shadow-md">
+            <h3 className="text-md font-bold font-prompt text-gray-800 mb-2">เข้าถึงโปรโมชั่นพิเศษก่อนใคร</h3>
+            <p className="text-gray-600 font-prompt text-sm">รับข่าวสารและโปรโมชั่นใหม่ๆ ก่อนใครผ่านทางอีเมล</p>
+          </div>
+          {/* สิทธิพิเศษ 3 */}
+          <div className="bg-[#ffffff] p-4 rounded-lg shadow-md">
+            <h3 className="text-md font-bold font-prompt text-gray-800 mb-2">บริการลูกค้าสัมพันธ์พิเศษ</h3>
+            <p className="text-gray-600 font-prompt text-sm">รับการดูแลและบริการที่รวดเร็วจากทีมงานของเรา</p>
+          </div>
+          {/* สิทธิพิเศษ 4 */}
+          <div className="bg-[#ffffff] p-4 rounded-lg shadow-md">
+            <h3 className="text-md font-bold font-prompt text-gray-800 mb-2">เข้าร่วมกิจกรรมพิเศษสำหรับสมาชิก</h3>
+            <p className="text-gray-600 font-prompt text-sm">เข้าร่วมกิจกรรมและเวิร์กช็อปที่จัดขึ้นเฉพาะสำหรับสมาชิกของเรา</p>
           </div>
         </div>
       </div>

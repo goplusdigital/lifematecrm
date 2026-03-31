@@ -81,6 +81,7 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
 
       // handle successful registration
       console.log('Registration successful');
+      router.push('/privilege');
     } catch (error) {
       console.error('Error registering:', error);
     } finally {
