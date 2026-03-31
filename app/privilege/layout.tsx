@@ -15,7 +15,7 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const token = (await cookies()).get('token')?.value
-
+    let data : any = {}
     // check is registered
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/profile`, {
         method: 'GET',
@@ -26,7 +26,7 @@ export default async function RootLayout({
     })
 
     if (res.ok) {
-        const data = await res.json();
+         data = await res.json();
         console.log('profile data', data);
         if (!data.exists) {
             await fetch('/api/logout', {
@@ -42,8 +42,8 @@ export default async function RootLayout({
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
     const { payload } = await jwtVerify(token, secret)
-    const phone = payload.phone_no
-    return <AuthProvider user={{ phone }} token={token}>
+
+    return <AuthProvider user={{ ...data , phone_no : payload.phone_no }} token={token}>
         <div className="flex flex-col h-dvh w-full overflow-hidden bg-[#E8E8E8] justify-start vertical-top">
             <main className="flex-1 overflow-y-auto text-gray-600 font-prompt text-xs leading-relaxed">
                 <div className="space-y-4">
