@@ -12,7 +12,7 @@ export const runtime = 'nodejs'
 export async function GET(req: Request) {
   try {
     const token = (await cookies()).get('token')?.value
-    let authToken;
+    let authToken : any;
     
     // 👉 ถ้าใช้ Authorization header แทน ก็อ่านจาก req.headers.get('Authorization') มาแทน
     const authHeader = req.headers.get('Authorization')
@@ -35,7 +35,7 @@ export async function GET(req: Request) {
     // ✅ 2. verify JWT
     let payload: any
     try {
-      const result = await jwtVerify(authToken || token, secret)
+      const result = await jwtVerify(authToken, secret)
       payload = result.payload
     } catch (err) {
       return NextResponse.json({ error: 'invalid token' }, { status: 401 })
