@@ -1,33 +1,27 @@
-import { NextRequest, NextResponse } from 'next/server';
+// /app/api/auth/me/route.ts
+import { NextResponse } from 'next/server'
+import { pool } from '@/lib/db'
 
-export async function GET(request: NextRequest) {
-    try {
-        // Check if user is authenticated (adjust based on your auth method)
-        const user = await getAuthenticatedUser(request);
-        
-        if (!user) {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
-            );
-        }
+export const runtime = 'nodejs'
 
-        // Return user profile
-        return NextResponse.json({ user });
-    } catch (error) {
-        return NextResponse.json(
-            { error: 'Internal Server Error' },
-            { status: 500 }
-        );
+export async function POST(req: Request) {
+  try {
+    const { phone_no } = await req.json()
+
+    if (!phone_no) {
+      return NextResponse.json({ exists: false }, { status: 400 })
     }
-}
 
-// Replace this with your actual auth logic
-async function getAuthenticatedUser(request: NextRequest) {
-    // Example: get from session, JWT token, etc.
-    const token = request.headers.get('authorization');
-    if (!token) return null;
-    
-    // Validate token and return user data
-    return { id: 1, email: 'user@example.com' };
+    const result : any = await pool.query(
+      `SELECT id FROM members WHERE member_phone = $1 LIMIT 1`,
+      [phone_no]
+    )
+
+    return NextResponse.json({
+      exists: result.rowCount > 0,
+    })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ exists: false }, { status: 500 })
+  }
 }

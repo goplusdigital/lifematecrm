@@ -7,6 +7,14 @@
     "termandcondition": "Term and Condition",
     "agree_pdpa": "I have read and accepted the terms and conditions of using the platform, including the privacy policy and personal data protection (PDPA), and I consent to the collection of my personal data as specified in the terms of service.",
     "agree_marketing": "I consent to the collection and disclosure of my personal data to Ampol Food Group, its affiliated companies, and platform service providers for marketing purposes and the provision of personalized benefits.",
-    "continue": "Continue"
+    "continue": "Continue",
+    "login/register": "Login / Register",
+    "text_login/register": "Please provide your phone number to accumulate points or receive various privileges.",
+    "placeholder_phone": "Phone number",
+    "error_request_otp_failed": "Failed to request OTP. Please try again later.",
+    "error_invalid_phone": "Invalid phone number. Please enter a valid 10-digit phone number.",
+    "text_confirm_otp": "Enter the 6-digit OTP sent to your phone number. If you haven't received it, please request a new one.",
+    "error_invalid_otp": "Invalid OTP. Please enter the correct 6-digit OTP."
+    
   }
 }

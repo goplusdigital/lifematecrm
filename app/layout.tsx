@@ -56,11 +56,11 @@ const fontPrompt = localFont({
 
 
 export const metadata: Metadata = {
-  title: "GO+ CRM",
+  title: "LIFEMATE CRM",
   description: "A CRM system for smart businesses.",
-  applicationName: "GO+ CRM",
+  applicationName: "LIFEMATE CRM",
   authors: [{ name: "GO PLUS DIGITAL", url: "https://goplus.co.th" }],
-  keywords: ["CRM", "Customer Relationship Management", "GO+", "Business"],
+  keywords: ["CRM", "Customer Relationship Management", "LIFEMATE", "Business"],
   themeColor: "#000000",
   viewport: {
     width: "device-width",
