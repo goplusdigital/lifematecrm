@@ -4,28 +4,55 @@
 import Image from "next/image";
 import { useAuth } from "../authcontext"
 import { Badge, Progress } from "flowbite-react";
+import { useEffect, useRef } from 'react';
+import { useQRCode } from 'next-qrcode'
 
 export default function Privilege() {
   const { user } = useAuth()
-  console.log(user)
+  const imgRef = useRef(null);
+  const { Canvas: QRCodeImage } = useQRCode()
+
+
+
   return (
     <>
-      <div className="flex flex-col items-center mt-8">
-        <div className="w-24 h-24 rounded-full bg-[#F5CBA7] flex items-center justify-center shadow-md overflow-hidden border-4 border-gray-200">
-          <Image src="/logo.jpg" alt="Logo" width={48} height={48} className='w-full h-full object-cover' />
+      <div className="flex flex-col items-center justify-center bg-[#ffffff] rounded-lg shadow-lg m-4 mx-8 mb-8 mt-16 p-8 relative">
+        {/* logo circle center - start */}
+        <div className="w-24 h-24 rounded-full bg-[#F5CBA7] flex items-center justify-center shadow-md absolute -top-12 left-1/2 transform -translate-x-1/2 overflow-hidden border-4 border-gray-200">
+          <Image src={`/logo.jpg`} alt="Logo" width={48} height={48} className='w-full h-full object-cover' />
         </div>
-        <h1 className="text-xl font-bold font-prompt text-gray-800 mt-4">
-          {user.fullname}
-        </h1>
-        <Badge color="success" size="lg" className="mt-2">
-          VIP Member
-        </Badge>
-      </div>
+        {/* logo circle center - end */}
+        <div className="flex flex-col items-center space-x-4 mb-4 mt-6">
+          <h1 className="text-xl font-bold font-prompt text-gray-800">
+            {user?.fullname || 'Member Name'}
+          </h1>
 
-      <div className="max-w-md mx-auto mt-8 p-4 bg-white rounded-lg shadow-md">
-        <h2 className="text-lg font-semibold mb-4">Membership Progress</h2>
-        <Progress progress={70} color="green" />
-        <p className="text-sm text-gray-600 mt-2">You are 70% of the way to the next membership level!</p>
+          <QRCodeImage
+            text={user?.phone_no}
+            // logo={{
+            //   src: `/logo.jpg`,
+            //   options: {
+            //     width: 35,
+             
+            //   }
+            // }}
+            options={{
+              errorCorrectionLevel: 'L',
+              margin: 3,
+              scale: 4,
+              width: 350,
+              color: {
+                dark: '#2a2a2a',
+                light: '#FFFFFF',
+              },
+
+            }}
+
+          />
+          <div className="text-sm font-prompt text-gray-600">กรุณาแสดง QR นี้ให้พนักงานเพื่อสะสมคะแนน</div>
+        </div>
+        {/* button continue - end */}
+
       </div>
     </>
   );

@@ -60,8 +60,8 @@ export async function GET(req: Request) {
       exists: result.rowCount > 0,
       fullname : result.rowCount > 0 ? result.rows[0].member_name : null,
       email : result.rowCount > 0 ? result.rows[0].member_email : null,
-      dob : result.rowCount > 0 ? formatDateLocal(new Date(result.rows[0].member_dob)) : null,
-      dobString : result.rowCount > 0 ? result.rows[0].member_dob.toISOString() : null,
+      dob : result.rowCount > 0 && result.rows[0].member_dob ? formatDateLocal(new Date(result.rows[0].member_dob)) : null,
+      dobString : result.rowCount > 0 && result.rows[0].member_dob ? result.rows[0].member_dob.toISOString() : null,
       gender : result.rowCount > 0 ? result.rows[0].member_gender : null,
     })
   } catch (err) {

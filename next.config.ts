@@ -3,6 +3,23 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  images: {
+    domains: ['localhost','crm.lifematewellness.com'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'crm.lifematewellness.com',
+        port: '443',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 

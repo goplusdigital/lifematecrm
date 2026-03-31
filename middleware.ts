@@ -6,7 +6,26 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname
-
+  // skip all image, api, _next, favicon.ico
+  if (pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/static') ||
+    pathname === '/favicon.ico') {
+    return NextResponse.next()
+  }
+  // skip all public routes except /privilege and /setprofile
+   if (
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname === '/about' ||
+    pathname === '/contact'
+  ) {
+    return NextResponse.next()
+  }
+  // skip all jpg, png, svg, etc
+  if (pathname.match(/\.(jpg|jpeg|png|svg|gif|ico|webp|avif|bmp|tiff|tif)$/)) {
+    return NextResponse.next()
+  }
   // 🔥 กัน loop ก่อน
   if (
     pathname === '/setprofile' ||
@@ -48,6 +67,10 @@ export async function middleware(req: NextRequest) {
     const data = await res.json()
 
     if (data.exists) {
+        // skip if url starts with /privilege or /setprofile
+        if (pathname.startsWith('/privilege')) {
+            return NextResponse.next()
+        }
       return NextResponse.redirect(new URL('/privilege', req.url))
     } else {
       return NextResponse.redirect(new URL('/setprofile', req.url))

@@ -29,7 +29,7 @@ export default async function RootLayout({
          data = await res.json();
         console.log('profile data', data);
         if (!data.exists) {
-            await fetch('/api/logout', {
+            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/logout`, {
                 method: 'POST',
             })
             redirect('/');
