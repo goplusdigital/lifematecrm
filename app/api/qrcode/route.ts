@@ -5,6 +5,8 @@ import { pool } from '@/lib/db'
 import { formatDateLocal, generateMemberCode } from '@/lib/helper'
 import { signToken } from '@/lib/jwt'
 import { access } from 'fs'
+
+
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
 
 export const runtime = 'nodejs'
@@ -56,14 +58,11 @@ export async function GET(req: Request) {
       [phone_no]
     )
 
+    const qrToken = await signToken({ phone_no: phone_no , member_code: result.rows[0].member_code }, '15m');
+
     return NextResponse.json({
-      exists: result.rowCount > 0,
-      fullname : result.rowCount > 0 ? result.rows[0].member_name : null,
-      email : result.rowCount > 0 ? result.rows[0].member_email : null,
-      dob : result.rowCount > 0 && result.rows[0].member_dob ? formatDateLocal(new Date(result.rows[0].member_dob)) : null,
-      dobString : result.rowCount > 0 && result.rows[0].member_dob ? result.rows[0].member_dob.toISOString() : null,
-      gender : result.rowCount > 0 ? result.rows[0].member_gender : null,
       member_code : result.rowCount > 0 ? result.rows[0].member_code : null,
+      token: qrToken.toString()
     })
   } catch (err) {
     console.error(err)
