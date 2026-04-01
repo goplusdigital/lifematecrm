@@ -7,6 +7,7 @@ import { Badge, Progress } from "flowbite-react";
 import { useEffect, useRef } from 'react';
 import { useQRCode } from 'next-qrcode'
 
+
 export default function Privilege() {
   const { user } = useAuth()
   const imgRef = useRef(null);
@@ -40,7 +41,7 @@ export default function Privilege() {
               errorCorrectionLevel: 'L',
               margin: 3,
               scale: 4,
-              width: 350,
+              width: 300,
               color: {
                 dark: '#2a2a2a',
                 light: '#FFFFFF',
