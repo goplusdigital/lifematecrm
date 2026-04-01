@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Viewport } from 'next'
 import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl"
 import { getTranslations } from 'next-intl/server';
@@ -54,20 +55,20 @@ const fontPrompt = localFont({
 })
 
 
-
+export const viewport: Viewport = {
+  themeColor: 'black',
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
 export const metadata: Metadata = {
   title: "LIFEMATE CRM",
   description: "A CRM system for smart businesses.",
   applicationName: "LIFEMATE CRM",
   authors: [{ name: "GO PLUS DIGITAL", url: "https://goplus.co.th" }],
   keywords: ["CRM", "Customer Relationship Management", "LIFEMATE", "Business"],
-  themeColor: "#000000",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+  
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",

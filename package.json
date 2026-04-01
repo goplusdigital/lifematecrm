@@ -26,7 +26,7 @@
     "qrcode-with-logos": "^1.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "sweetalert2": "^11.26.22"
+    "sweetalert2": "^11.26.24"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

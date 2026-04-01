@@ -42,8 +42,13 @@ export default async function RootLayout({
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
     const { payload } = await jwtVerify(token, secret)
+    let user = { ...data, phone_no: payload.phone_no }
+    const setUser = (userData: any) => {
+        user = { ...user, ...userData }
+    }
+    
 
-    return <AuthProvider user={{ ...data , phone_no : payload.phone_no }} token={token}>
+    return <AuthProvider user={user} token={token}>
         <div className="flex flex-col h-dvh w-full overflow-hidden bg-[#E8E8E8] justify-start vertical-top">
             <main className="flex-1 overflow-y-auto text-gray-600 font-prompt text-xs leading-relaxed">
                 <div className="space-y-4">
