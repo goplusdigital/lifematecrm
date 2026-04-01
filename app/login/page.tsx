@@ -13,6 +13,7 @@ export default function Login() {
   const { locale, setLocale } = useLocale();
   const [phone, setPhone] = React.useState('');
   const [error, setError] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
  
 
   const t = useTranslations('agreement');
@@ -31,6 +32,7 @@ export default function Login() {
   }
   const requestOtp = async () => {
     try {
+      setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/otp/request`, {
         method: 'POST',
         headers: {
@@ -47,9 +49,11 @@ export default function Login() {
         router.push('/otp');
       } else {
         setError(t('error_request_otp_failed'));
+        setLoading(true);
       }
     } catch (e) {
       setError(t('error_request_otp_failed'));
+      setLoading(true);
       return;
     }
 
@@ -81,7 +85,7 @@ export default function Login() {
         {/* input phone number - end */}
         {/* button continue - start */}
         <button
-          disabled={!phone}
+          disabled={!phone || loading}
           onClick={() => { doContinue() }}
           className="w-full bg-[#F35F1A] hover:bg-[#e64e0d] text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
           {t('continue')}

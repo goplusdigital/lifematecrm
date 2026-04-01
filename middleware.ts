@@ -15,7 +15,6 @@ export async function middleware(req: NextRequest) {
   }
   // skip all public routes except /privilege and /setprofile
    if (
-    pathname === '/' ||
     pathname === '/login' ||
     pathname === '/about' ||
     pathname === '/contact'
@@ -41,6 +40,9 @@ export async function middleware(req: NextRequest) {
 
   // ❌ ไม่มี token → ปล่อยผ่าน
   if (!token) {
+    if(pathname.startsWith('/privilege') || pathname.startsWith('/setprofile')) {
+      return NextResponse.redirect(new URL('/', req.url))
+    }
     return NextResponse.next()
   }
 
