@@ -1,10 +1,10 @@
-// /middleware.ts
+// /proxy.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname
   // skip all image, api, _next, favicon.ico
   if (pathname.startsWith('/_next') ||

@@ -4,7 +4,6 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ['localhost','crm.lifematewellness.com'],
     remotePatterns: [
       {
         protocol: 'http',

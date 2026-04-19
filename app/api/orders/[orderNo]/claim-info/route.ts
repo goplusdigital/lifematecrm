@@ -15,7 +15,7 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
  */
 export async function GET(
     request: NextRequest,
-    { params }: { params: { orderNo: string } }
+    { params }: { params: Promise<{ orderNo: string }> }
 ) {
     try {
         const { orderNo } = await params

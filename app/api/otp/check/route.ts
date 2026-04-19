@@ -66,7 +66,7 @@ export async function POST(req: Request) {
 
     
 
-    const token = await signToken({ phone_no: phone_no_string });
+    const token = await signToken({ phone_no: phone_no_string }, '180d');
     const res = NextResponse.json({ success: true, token });
     res.cookies.set("token", token, {
       httpOnly: true,

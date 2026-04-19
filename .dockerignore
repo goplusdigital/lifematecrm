@@ -1,0 +1,31 @@
+# Node artifacts
+node_modules
+npm-debug.log*
+
+# Build outputs
+.next
+out
+coverage
+
+# Local env and git
+.env
+.env.*
+.git
+.gitignore
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+
+# Docs and misc
+docs
+*.md
+lifemate.dump
+lifemate.sql
+*.xlsx
+
+# Cache and temp
+.cache
+tmp
+.xlsx

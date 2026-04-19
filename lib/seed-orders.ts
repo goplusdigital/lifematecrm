@@ -43,7 +43,7 @@ const testOrders = [
     points_earned: 28,
     payment_method: 'Credit Card',
     payment_status: 'completed',
-    notes: null
+    notes: ''
   }
 ]
 

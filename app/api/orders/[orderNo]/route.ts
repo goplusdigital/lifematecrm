@@ -13,7 +13,7 @@ const normalizePhone = (phone?: string | null) => {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orderNo: string } }
+  { params }: { params: Promise<{ orderNo: string }> }
 ) {
   try {
     const { orderNo } = await params
