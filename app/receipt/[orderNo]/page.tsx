@@ -199,7 +199,7 @@ export default function ReceiptPage() {
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-gray-500 text-sm">เลขที่{order.receipt_no ? `ใบกำกับภาษีอย่างย่อ` : 'ใบเสร็จ'}</p>
-                                <p className="text-xs font-bold text-gray-800">{order.receipt_no}</p>
+                                <p className="text-xs font-bold text-gray-800">{order.receipt_no || order.order_no}</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-gray-500 text-sm">วันที่</p>

@@ -2,7 +2,6 @@
 import { NextResponse } from 'next/server'
 import { pool } from '@/lib/db'
 import { generateOTP, hashOTP,generateRefCode } from '@/lib/otp'
-import { QueryResult } from 'pg'
 import { sendSMS } from '@/lib/ais'
 
 export async function POST(req: Request) {
@@ -18,6 +17,37 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'phone_no required' }, { status: 400 })
     }
 
+    // ⛔ anti-spam: count attempts from DB and lock 15 minutes from latest attempt
+    const lockWindowResult: any = await pool.query(
+      `SELECT
+         COUNT(*)::int AS request_count,
+         MAX(created_at) AS last_created_at
+       FROM sms_otp
+       WHERE phone_no = $1
+         AND created_at > now() - interval '15 minutes'`,
+      [phone_no_string]
+    )
+
+    const requestCount = Number(lockWindowResult.rows[0]?.request_count || 0)
+    const lastCreatedAt = lockWindowResult.rows[0]?.last_created_at
+
+    if (requestCount >= 5 && lastCreatedAt) {
+      const lastAttemptAt = new Date(lastCreatedAt)
+      const unlockAt = new Date(lastAttemptAt.getTime() + 15 * 60 * 1000)
+      const retryAfterSec = Math.ceil((unlockAt.getTime() - Date.now()) / 1000)
+
+      if (retryAfterSec > 0) {
+        return NextResponse.json(
+          {
+            error: 'Too many requests. Locked for 15 minutes.',
+            ref_code: null,
+            retry_after_sec: retryAfterSec,
+          },
+          { status: 429 }
+        )
+      }
+    }
+
     // ⛔ rate limit (60 วิ)
     const recent : any = await pool.query(
       `SELECT 1 FROM sms_otp 
@@ -27,7 +57,7 @@ export async function POST(req: Request) {
     )
 
     if (recent.rowCount > 0) {
-      return NextResponse.json({ error: 'Too many requests' , 'ref_code': null }, { status: 429 })
+      return NextResponse.json({ error: 'Too many requests' , 'ref_code': null, retry_after_sec: 60 }, { status: 429 })
     }
 
     // 🔢 generate OTP
@@ -36,9 +66,10 @@ export async function POST(req: Request) {
 
     const ref_code = generateRefCode(6)
 
-    // 🧹 ลบ OTP เก่าที่ยังไม่ใช้
+    // 🧹 ปิด OTP เก่าที่ยังไม่ใช้ (เก็บ history สำหรับ anti-spam)
     await pool.query(
-      `DELETE FROM sms_otp 
+      `UPDATE sms_otp
+       SET is_used = true
        WHERE phone_no = $1 AND is_used = false`,
       [phone_no_string]
     )
