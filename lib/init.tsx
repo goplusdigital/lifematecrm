@@ -3,6 +3,7 @@
 import { NextIntlClientProvider } from "next-intl"
 import en from '@/messages/en.json';
 import th from '@/messages/th.json';
+import {defaultTimeZone} from '@/lib/i18n';
 import {useLocale} from './locale';
 
 export default function IntlProvider({children} : {children: React.ReactNode}) {
@@ -12,6 +13,7 @@ export default function IntlProvider({children} : {children: React.ReactNode}) {
     <NextIntlClientProvider
       locale={locale}
       messages={messagesMap[locale]}
+      timeZone={defaultTimeZone}
     >
       {children}
     </NextIntlClientProvider>

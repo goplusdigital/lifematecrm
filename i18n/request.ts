@@ -1,5 +1,6 @@
 import {getRequestConfig} from 'next-intl/server';
 import {defineRouting} from 'next-intl/routing';
+import {defaultTimeZone} from '@/lib/i18n';
  
 export const routing = defineRouting({
   // A list of all locales that are supported
@@ -15,6 +16,7 @@ export default getRequestConfig(async () => {
  
   return {
     locale,
+    timeZone: defaultTimeZone,
     messages: (await import(`../messages/${locale}.json`)).default
   };
 });

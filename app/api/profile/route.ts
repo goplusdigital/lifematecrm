@@ -64,6 +64,7 @@ export async function GET(req: Request) {
       dobString : result.rowCount > 0 && result.rows[0].member_dob ? result.rows[0].member_dob.toISOString() : null,
       gender : result.rowCount > 0 ? result.rows[0].member_gender : null,
       member_code : result.rowCount > 0 ? result.rows[0].member_code : null,
+      member_point : result.rowCount > 0 ? result.rows[0].member_point : null,
     })
   } catch (err) {
     console.error(err)
