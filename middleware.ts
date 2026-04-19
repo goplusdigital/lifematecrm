@@ -30,6 +30,7 @@ export async function middleware(req: NextRequest) {
     pathname === '/setprofile' ||
     pathname === '/privilege' ||
     pathname.startsWith('/receipt') ||
+    pathname.startsWith('/claim') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
     pathname === '/favicon.ico'
