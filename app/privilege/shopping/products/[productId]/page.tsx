@@ -28,6 +28,14 @@ type ProductDetailResponse = {
   error?: string
 }
 
+type ProductSearchItem = {
+  productId: number
+  productName: string
+  slug: string
+  variantId: number
+  image: string | null
+}
+
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('th-TH').format(price)
 }
@@ -42,6 +50,10 @@ export default function ProductDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [productData, setProductData] = useState<ProductDetailResponse['data']>()
   const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<ProductSearchItem[]>([])
+  const [showSearchResults, setShowSearchResults] = useState(false)
+  const [searchLoading, setSearchLoading] = useState(false)
 
   const fallbackProductId = useMemo(() => {
     const parts = pathname.split('/').filter(Boolean)
@@ -90,6 +102,43 @@ export default function ProductDetailPage() {
 
     fetchProductDetail()
   }, [productId])
+
+  useEffect(() => {
+    const trimmed = searchQuery.trim()
+
+    if (trimmed.length < 2) {
+      setSearchResults([])
+      setSearchLoading(false)
+      return
+    }
+
+    const controller = new AbortController()
+    const timeoutId = window.setTimeout(async () => {
+      try {
+        setSearchLoading(true)
+        const response = await fetch(`/api/products/search?q=${encodeURIComponent(trimmed)}`, {
+          signal: controller.signal,
+        })
+        const json = await response.json()
+        if (!response.ok || !json?.success || !Array.isArray(json?.data)) {
+          setSearchResults([])
+          return
+        }
+        setSearchResults(json.data)
+      } catch (searchError) {
+        if ((searchError as Error).name !== 'AbortError') {
+          console.error('Failed to search products:', searchError)
+        }
+      } finally {
+        setSearchLoading(false)
+      }
+    }, 250)
+
+    return () => {
+      controller.abort()
+      window.clearTimeout(timeoutId)
+    }
+  }, [searchQuery])
 
   const selectedVariant = useMemo(() => {
     if (!productData || !selectedVariantId) return null
@@ -153,18 +202,101 @@ export default function ProductDetailPage() {
     router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false })
   }
 
+  const onBack = () => {
+    router.push('/privilege/shopping')
+  }
+
+  const onPickSearchItem = (item: ProductSearchItem) => {
+    setShowSearchResults(false)
+    setSearchQuery('')
+    router.push(`/privilege/shopping/products/${item.productId}?variant=${item.variantId}`)
+  }
+
+  const topBar = (
+    <div className="sticky top-0 z-30 bg-white border-b border-gray-200">
+      <div className="max-w-md mx-auto px-3 py-2">
+        <div className="relative flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onBack}
+            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-700"
+            aria-label="ย้อนกลับ"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onFocus={() => setShowSearchResults(true)}
+              onBlur={() => window.setTimeout(() => setShowSearchResults(false), 120)}
+              placeholder="ค้นหาสินค้า"
+              className="w-full h-10 rounded-full border border-gray-200 bg-[#f7f7f7] px-4 text-sm text-gray-800 focus:outline-none focus:border-[#ee4d2d]"
+            />
+
+            {showSearchResults && (searchLoading || searchResults.length > 0 || searchQuery.trim().length >= 2) && (
+              <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-40">
+                {searchLoading ? (
+                  <div className="px-4 py-3 text-sm text-gray-500">กำลังค้นหา...</div>
+                ) : searchResults.length > 0 ? (
+                  <ul className="max-h-72 overflow-y-auto">
+                    {searchResults.map((item) => (
+                      <li key={`${item.productId}-${item.variantId}`}>
+                        <button
+                          type="button"
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => onPickSearchItem(item)}
+                          className="w-full px-3 py-2 flex items-center gap-3 hover:bg-[#fff5f2]"
+                        >
+                          <span className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                            {item.image ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="w-full h-full flex items-center justify-center text-[10px] text-gray-400">No Img</span>
+                            )}
+                          </span>
+                          <span className="text-left min-w-0">
+                            <span className="block text-sm text-gray-800 line-clamp-1">{item.productName}</span>
+                            <span className="block text-xs text-gray-400 line-clamp-1">/{item.slug}</span>
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="px-4 py-3 text-sm text-gray-500">ไม่พบสินค้า</div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
   if (loading) {
     return (
-      <div className="p-5 bg-[#E8E8E8] min-h-screen font-prompt">
-        <div className="bg-white rounded-2xl p-6 text-center text-gray-600">กำลังโหลดข้อมูลสินค้า...</div>
+      <div className="bg-[#E8E8E8] min-h-screen font-prompt">
+        {topBar}
+        <div className="p-5">
+          <div className="bg-white rounded-2xl p-6 text-center text-gray-600">กำลังโหลดข้อมูลสินค้า...</div>
+        </div>
       </div>
     )
   }
 
   if (error || !productData) {
     return (
-      <div className="p-5 bg-[#E8E8E8] min-h-screen font-prompt">
-        <div className="bg-white rounded-2xl p-6 text-center text-red-500">{error || 'ไม่พบสินค้า'}</div>
+      <div className="bg-[#E8E8E8] min-h-screen font-prompt">
+        {topBar}
+        <div className="p-5">
+          <div className="bg-white rounded-2xl p-6 text-center text-red-500">{error || 'ไม่พบสินค้า'}</div>
+        </div>
       </div>
     )
   }
@@ -173,6 +305,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="bg-[#f5f5f5] min-h-screen font-prompt pb-40">
+      {topBar}
       <div className="bg-white mb-2">
         <div className="w-full aspect-square overflow-hidden bg-gray-100">
           {activeImage ? (
