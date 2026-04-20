@@ -105,7 +105,7 @@ export default function Account() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-top bg-[#ffffff] m-0 p-8 relative h-dvh w-full overflow-y-auto pb-10">
+      <div className="flex flex-col items-center justify-top bg-[#ffffff] m-0 p-8 relative min-h-full w-full pb-10">
         <div className="flex flex-col rounded-lg border border-gray-200 w-full max-w-md m-6 p-6">
           <p className="text-xl font-bold font-prompt text-center m-4">ตั้งค่าโปรไฟล์</p>
           {/* <div className="flex flex-col w-full mb-2">
