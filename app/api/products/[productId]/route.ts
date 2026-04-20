@@ -13,6 +13,7 @@ type RawVariant = {
   name: string
   attributes: unknown
   price: string | number
+  soldQuantity: number
 }
 
 const getS3Bucket = () => {
@@ -245,7 +246,15 @@ export async function GET(
         product_variants.barcode,
         product_variants."name",
         product_variants."attributes",
-        product_variants.price
+        product_variants.price,
+        COALESCE(
+          (
+            SELECT SUM(order_items.quantity)::int
+            FROM order_items
+            WHERE order_items."variantId" = product_variants."id"
+          ),
+          0
+        ) AS "soldQuantity"
       FROM product_variants
       WHERE product_variants."productId" = $1
       ORDER BY product_variants.id ASC
@@ -297,6 +306,7 @@ export async function GET(
           ...variant,
           attributes,
           price: Number(variant.price),
+          soldQuantity: Number(variant.soldQuantity || 0),
           imageUrls,
         }
       })

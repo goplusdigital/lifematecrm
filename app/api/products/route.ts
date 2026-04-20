@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { pool } from '@/lib/db'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
@@ -8,9 +8,11 @@ export const runtime = 'nodejs'
 type ProductRow = {
   id: number
   productId: number
+  categoryId: number | null
   sku: string
   name: string
   productName: string
+  soldQuantity: number
   attributes: unknown
   price: string | number
   image: string | null
@@ -98,18 +100,31 @@ const toSignedOrAbsoluteImageUrl = async (
   return toAbsoluteImageUrl(image)
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const categoryIdParam = request.nextUrl.searchParams.get('categoryId')
+  const parsedCategoryId = Number(categoryIdParam)
+  const hasCategoryFilter = Number.isFinite(parsedCategoryId) && parsedCategoryId > 0
+
   try {
     const result = await pool.query(
       `
       SELECT
           pv.id,
           p.id AS "productId",
+          p."categoryId" AS "categoryId",
           pv.sku,
           pv.name,
           pv.attributes,
           pv.price,
           p.name AS "productName",
+          COALESCE(
+            (
+              SELECT SUM(order_items.quantity)::int
+              FROM order_items
+              WHERE order_items."variantId" = pv.id
+            ),
+            0
+          ) AS "soldQuantity",
           COALESCE(
             NULLIF(pv.attributes::jsonb ->> 'imageKey', ''),
             (
@@ -123,8 +138,10 @@ export async function GET() {
       FROM product_variants pv
       JOIN products p ON p.id = pv."productId"
       WHERE p.slug IS NOT NULL AND p.slug <> ''
+        ${hasCategoryFilter ? 'AND p."categoryId" = $1' : ''}
       ORDER BY p.id, pv.id
-      `
+      `,
+      hasCategoryFilter ? [parsedCategoryId] : []
     )
 
     const s3Bucket = getS3Bucket()

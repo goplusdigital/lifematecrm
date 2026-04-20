@@ -17,6 +17,7 @@ type ProductDetailResponse = {
       id: number
       name: string
       price: number
+      soldQuantity: number
       imageUrls: string[]
     }>
     images: string[]
@@ -38,6 +39,10 @@ type ProductSearchItem = {
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('th-TH').format(price)
+}
+
+const formatSold = (quantity: number) => {
+  return new Intl.NumberFormat('th-TH').format(Number(quantity || 0))
 }
 
 export default function ProductDetailPage() {
@@ -187,6 +192,12 @@ export default function ProductDetailPage() {
     const { min, max } = productData.priceRange
     if (!max || max <= min) return null
     return Math.round(((max - min) / max) * 100)
+  }, [productData, selectedVariant])
+
+  const displaySoldQuantity = useMemo(() => {
+    if (!productData) return 0
+    if (selectedVariant) return Number(selectedVariant.soldQuantity || 0)
+    return productData.variants.reduce((sum, variant) => sum + Number(variant.soldQuantity || 0), 0)
   }, [productData, selectedVariant])
 
   const onSelectVariant = (variantId: number) => {
@@ -351,7 +362,7 @@ export default function ProductDetailPage() {
 
         <div className="flex items-center gap-3 text-xs text-gray-500">
           <span>⭐⭐⭐⭐⭐ 5.0 คะแนนรีวิว</span>
-          <span>ขายแล้ว 1.2k</span>
+          <span>ขายแล้ว {formatSold(displaySoldQuantity)}</span>
           {productData.product.categoriesName && <span>{productData.product.categoriesName}</span>}
         </div>
       </div>
