@@ -2,11 +2,48 @@
 
 
 import Image from "next/image";
+import Link from "next/link";
 import { useAuth } from "./authcontext"
 import { Badge, Progress } from "flowbite-react";
+import { useEffect, useMemo, useState } from "react";
+
+type InterestingProduct = {
+  id: number
+  sku: string
+  name: string
+  productId: number
+  productName: string
+  price: string | number
+  image: string | null
+}
 
 export default function Privilege() {
   const { user } = useAuth()
+  const [products, setProducts] = useState<InterestingProduct[]>([])
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/interesting-products')
+        const json = await response.json()
+        if (json?.success && Array.isArray(json.data)) {
+          setProducts(json.data)
+        }
+      } catch (error) {
+        console.error('Failed to load interesting products:', error)
+      }
+    }
+
+    fetchProducts()
+  }, [])
+
+  const topProducts = useMemo(() => products.slice(0, 6), [products])
+
+  const formatPrice = (price: string | number) => {
+    const value = Number(price || 0)
+    return new Intl.NumberFormat('th-TH').format(value)
+  }
+
   console.log(user)
   return (
     <>
@@ -67,28 +104,50 @@ export default function Privilege() {
         </div>
       </div>
       <div className="flex-1 p-5 gap-4 bg-[#E8E8E8]">
-        <h2 className="text-lg font-bold font-prompt text-gray-800 mb-4">สิทธิพิเศษของคุณ</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* สิทธิพิเศษ 1 */}
-          <div className="bg-[#ffffff] p-4 rounded-lg shadow-md">
-            <h3 className="text-md font-bold font-prompt text-gray-800 mb-2">ส่วนลด 10% สำหรับการซื้อครั้งถัดไป</h3>
-            <p className="text-gray-600 font-prompt text-sm">ใช้รหัสส่วนลด: WELCOME10 เมื่อชำระเงิน</p>
-          </div>
-          {/* สิทธิพิเศษ 2 */}
-          <div className="bg-[#ffffff] p-4 rounded-lg shadow-md">
-            <h3 className="text-md font-bold font-prompt text-gray-800 mb-2">เข้าถึงโปรโมชั่นพิเศษก่อนใคร</h3>
-            <p className="text-gray-600 font-prompt text-sm">รับข่าวสารและโปรโมชั่นใหม่ๆ ก่อนใครผ่านทางอีเมล</p>
-          </div>
-          {/* สิทธิพิเศษ 3 */}
-          <div className="bg-[#ffffff] p-4 rounded-lg shadow-md">
-            <h3 className="text-md font-bold font-prompt text-gray-800 mb-2">บริการลูกค้าสัมพันธ์พิเศษ</h3>
-            <p className="text-gray-600 font-prompt text-sm">รับการดูแลและบริการที่รวดเร็วจากทีมงานของเรา</p>
-          </div>
-          {/* สิทธิพิเศษ 4 */}
-          <div className="bg-[#ffffff] p-4 rounded-lg shadow-md">
-            <h3 className="text-md font-bold font-prompt text-gray-800 mb-2">เข้าร่วมกิจกรรมพิเศษสำหรับสมาชิก</h3>
-            <p className="text-gray-600 font-prompt text-sm">เข้าร่วมกิจกรรมและเวิร์กช็อปที่จัดขึ้นเฉพาะสำหรับสมาชิกของเรา</p>
-          </div>
+        <h2 className="text-lg font-bold font-prompt text-gray-800 mb-4">สินค้าที่น่าสนใจ</h2>
+        <div className="grid grid-cols-2 gap-4">
+          {topProducts.map((item) => {
+            const canNavigate = Boolean(item.productId) && Boolean(item.id)
+            const productHref = canNavigate
+              ? `/privilege/shopping/products/${item.productId}?variant=${item.id}`
+              : '#'
+
+            return (
+            <Link
+              key={item.id}
+              href={productHref}
+              className="bg-[#ffffff] rounded-2xl shadow-md border border-gray-100 p-3 block"
+              aria-disabled={!canNavigate}
+            >
+              <span className="block w-full aspect-square rounded-xl overflow-hidden bg-gray-100 mb-3">
+                {item.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.image}
+                    alt={item.name || item.productName}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="w-full h-full flex items-center justify-center text-gray-400 text-sm font-prompt">
+                    ไม่มีรูปสินค้า
+                  </span>
+                )}
+              </span>
+              <span className="block rounded-xl border border-gray-100 px-3 py-2 font-prompt">
+                <p className="text-gray-800 font-semibold text-sm line-clamp-2">{item.productName}</p>
+                <p className="text-gray-600 text-sm line-clamp-1 mb-1">{item.name}</p>
+                <p className="text-[#0093e8] font-bold text-base">฿ {formatPrice(item.price)}</p>
+                </span>
+            </Link>
+            )
+          })}
+
+          {topProducts.length === 0 && (
+            <div className="bg-[#ffffff] p-4 rounded-lg shadow-md col-span-2 text-center">
+              <p className="text-gray-600 font-prompt text-sm">ยังไม่มีสินค้าที่น่าสนใจ</p>
+            </div>
+          )}
         </div>
       </div>
     </>
