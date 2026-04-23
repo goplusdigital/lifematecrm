@@ -15,8 +15,13 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const token = (await cookies()).get('token')?.value
+    if (!token) {
+        redirect('/api/logout?next=/')
+    }
+
     let data: any = {}
     const baseUrl = await getServerBaseUrl()
+    let shouldForceReRegister = false
     // check is registered
     try {
         const res = await fetch(`${baseUrl}/api/profile`, {
@@ -31,20 +36,19 @@ export default async function RootLayout({
             data = await res.json();
             console.log('profile data', data);
             if (!data.exists) {
-                await fetch(`${baseUrl}/api/logout`, {
-                    method: 'POST',
-                })
-                redirect('/');
+                shouldForceReRegister = true
             }
         } else {
-            return <LoadFail />
+            shouldForceReRegister = true
         }
     } catch (err) {
         console.error('error fetching profile', err);
-        return <LoadFail />
+        shouldForceReRegister = true
     }
 
-    if (!token) return null
+    if (shouldForceReRegister) {
+        redirect('/api/logout?next=/')
+    }
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
     let payload: any
@@ -52,9 +56,7 @@ export default async function RootLayout({
         const verified = await jwtVerify(token, secret)
         payload = verified.payload
     } catch {
-        const cookieStore = await cookies()
-        cookieStore.delete('token')
-        redirect('/')
+        redirect('/api/logout?next=/')
     }
     let user = { ...data, phone_no: payload.phone_no }
     const setUser = (userData: any) => {

@@ -42,6 +42,15 @@
     "gender_other": "ไม่ระบุ",
     "gender_lgbtq": "LGBTQ+",
     "input_gender": "เพศ",
-    "input_phone": "หมายเลขโทรศัพท์"
+    "input_phone": "หมายเลขโทรศัพท์",
+    "error_invalid_email": "อีเมลไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง",
+    "error_fullname_required": "กรุณากรอกชื่อ-นามสกุล",
+    "error_email_exists": "อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้อีเมลอื่น",
+    "error_session_expired": "เซสชันหมดอายุ กรุณาเริ่มใหม่อีกครั้ง",
+    "error_register_failed": "ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง",
+    "error_title": "ไม่สามารถดำเนินการได้",
+    "success_title": "เรียบร้อย",
+    "success_register_text": "บันทึกข้อมูลสำเร็จ ระบบจะพาไปหน้าสิทธิพิเศษ",
+    "success_button": "ตกลง"
   }
 }

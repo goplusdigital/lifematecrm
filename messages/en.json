@@ -16,5 +16,31 @@
     "text_confirm_otp": "Enter the 6-digit OTP sent to your phone number. If you haven't received it, please request a new one.",
     "error_invalid_otp": "Invalid OTP. Please enter the correct 6-digit OTP."
     
+  },
+  "setprofile": {
+    "set_profile": "Set your profile",
+    "text_set_profile": "Please provide your profile details to receive personalized benefits.",
+    "placeholder_name": "Full name",
+    "placeholder_email": "Email",
+    "continue": "Continue",
+    "logout": "Logout",
+    "input_fullname": "Full name",
+    "input_email": "Email",
+    "input_dob": "Date of birth",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "gender_other": "Prefer not to say",
+    "gender_lgbtq": "LGBTQ+",
+    "input_gender": "Gender",
+    "input_phone": "Phone number",
+    "error_invalid_email": "Invalid email address. Please check again.",
+    "error_fullname_required": "Please enter your full name.",
+    "error_email_exists": "This email is already in use. Please use another email.",
+    "error_session_expired": "Your session has expired. Please start again.",
+    "error_register_failed": "Unable to save your profile. Please try again.",
+    "error_title": "Unable to continue",
+    "success_title": "Well Done!",
+    "success_register_text": "Your profile has been saved. We will take you to privileges.",
+    "success_button": "Okay, Got It"
   }
 }

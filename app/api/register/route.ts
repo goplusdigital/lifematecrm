@@ -4,7 +4,6 @@ import { jwtVerify } from 'jose'
 import { pool } from '@/lib/db'
 import { generateMemberCode } from '@/lib/helper'
 import { signToken } from '@/lib/jwt'
-import { access } from 'fs'
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
 
   
@@ -12,45 +11,37 @@ export async function POST(req: Request) {
     try {
         // ✅ 1. อ่าน token จาก cookie
         const token = (await cookies()).get('token')?.value
-        let auhtToken;
         if (!token) {
-            return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+            return NextResponse.json({ error: 'unauthorized', errorCode: 'UNAUTHORIZED' }, { status: 401 })
         }
         // 👉 ถ้าใช้ Authorization header แทน ก็อ่านจาก req.headers.get('Authorization') มาแทน
-        const authHeader = req.headers.get('Authorization')
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-            const tokenFromHeader = authHeader.substring(7)
-            if (tokenFromHeader) {
-                auhtToken = tokenFromHeader
-            }
-        }
-
-        // if (auhtToken != token) {
-        //     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-        // }
         // ✅ 2. verify JWT
         let payload: any
         try {
             const result = await jwtVerify(token, secret)
             payload = result.payload
         } catch (err) {
-            return NextResponse.json({ error: 'invalid token' }, { status: 401 })
+            return NextResponse.json({ error: 'invalid token', errorCode: 'INVALID_TOKEN' }, { status: 401 })
         }
 
         // ✅ 3. ดึงข้อมูลจาก token
         const phone_no = payload.phone_no as string
 
         if (!phone_no) {
-            return NextResponse.json({ error: 'invalid payload' }, { status: 401 })
+            return NextResponse.json({ error: 'invalid payload', errorCode: 'INVALID_PAYLOAD' }, { status: 401 })
         }
 
         // ✅ 4. รับ body
         const body = await req.json()
-
+        console.log('Received registration data:', body);
         const { fullname: member_name, email : member_email, dob: member_dob, phone_no: body_phone_no, gender: member_gender } = body
 
+        if (!member_name || String(member_name).trim().length === 0) {
+            return NextResponse.json({ error: 'fullname required', errorCode: 'FULLNAME_REQUIRED' }, { status: 400 })
+        }
+
         if (phone_no !== body_phone_no) {
-            return NextResponse.json({ error: 'phone number mismatch' }, { status: 400 })
+            return NextResponse.json({ error: 'phone number mismatch', errorCode: 'PHONE_MISMATCH' }, { status: 400 })
         }
 
         // 👉 validate เพิ่มเองได้
@@ -65,7 +56,7 @@ export async function POST(req: Request) {
                 [member_email]
             )
             if (existingEmail.rowCount > 0) {
-                return NextResponse.json({ error: 'email already exists' }, { status: 400 })
+                return NextResponse.json({ error: 'email already exists', errorCode: 'EMAIL_ALREADY_EXISTS' }, { status: 400 })
             }
         }
         const existing: any = await pool.query(
@@ -119,6 +110,6 @@ export async function POST(req: Request) {
 
     } catch (err) {
         console.error(err)
-        return NextResponse.json({ error: 'internal error' }, { status: 500 })
+        return NextResponse.json({ error: 'internal error', errorCode: 'INTERNAL_ERROR' }, { status: 500 })
     }
 }

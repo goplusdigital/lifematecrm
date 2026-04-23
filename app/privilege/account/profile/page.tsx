@@ -3,17 +3,20 @@
 
 import Image from "next/image";
 import { useAuth } from "../../authcontext"
-import { Badge, Datepicker, Progress } from "flowbite-react";
+import { Badge, Progress } from "flowbite-react";
 import { useEffect, useRef, useState } from 'react';
 import { useQRCode } from 'next-qrcode'
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Swal from 'sweetalert2'
+import { useLocale } from '@/lib/locale';
+import DobDatePicker from '@/app/components/DobDatePicker';
 
 
 export default function Account() {
   const { user ,token} = useAuth()
+  const { locale } = useLocale();
   const router = useRouter();
   const imgRef = useRef(null);
   const { Canvas: QRCodeImage } = useQRCode()
@@ -71,7 +74,19 @@ export default function Account() {
         }),
       });
 
+      let responseData: any = null;
+      try {
+        responseData = await res.json();
+      } catch {
+        responseData = null;
+      }
+
       if (!res.ok) {
+        if (res.status === 401 || responseData?.errorCode === 'MEMBER_NOT_FOUND') {
+          await fetch('/api/logout', { method: 'POST' });
+          window.location.href = '/';
+          return;
+        }
         Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -162,11 +177,12 @@ export default function Account() {
           <label className="block text-xs font-medium font-prompt text-gray-500 mb-2 uppercase tracking-wide">
             {t('input_dob')} <span className="text-gray-400 normal-case tracking-normal text-xs">(ไม่บังคับ)</span>
           </label>
-          <Datepicker
-            className="w-full font-prompt text-sm"
+          <DobDatePicker
+            locale={locale}
             value={selectedDate}
             onChange={setSelectedDate}
             placeholder="เลือกวันเดือนปีเกิด"
+            inputClassName="w-full font-prompt text-sm border border-gray-300 rounded-lg px-4 py-3 bg-white text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#F35F1A]"
           />
         </div>
 

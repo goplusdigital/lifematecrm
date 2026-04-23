@@ -13,3 +13,17 @@ export async function POST() {
 
   return res
 }
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const next = searchParams.get('next') || '/'
+  const res = NextResponse.redirect(new URL(next, req.url))
+
+  res.cookies.set('token', '', {
+    httpOnly: true,
+    path: '/',
+    maxAge: 0,
+  })
+
+  return res
+}

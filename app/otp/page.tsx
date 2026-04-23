@@ -8,15 +8,121 @@ import Image from 'next/image';
 import { Spinner } from "flowbite-react";
 
 export default function Login() {
+  const OTP_LENGTH = 6;
 
   const router = useRouter();
   const { data, setData } = useStore();
   const { locale, setLocale } = useLocale();
-  const [otp, setOtp] = React.useState('');
+  const [otpDigits, setOtpDigits] = React.useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [error, setError] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+  const otpRefs = React.useRef<Array<HTMLInputElement | null>>([]);
+  const otp = otpDigits.join('');
+
+  const focusOtpInput = (index: number) => {
+    otpRefs.current[index]?.focus();
+  };
+
+  const resetOtpInput = () => {
+    setOtpDigits(Array(OTP_LENGTH).fill(''));
+    focusOtpInput(0);
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    const digitsOnly = value.replace(/\D/g, '');
+    if (!digitsOnly) {
+      const nextOtp = [...otpDigits];
+      nextOtp[index] = '';
+      setOtpDigits(nextOtp);
+      return;
+    }
+
+    const nextOtp = [...otpDigits];
+    const chars = digitsOnly.split('');
+    for (let i = 0; i < chars.length && index + i < OTP_LENGTH; i++) {
+      nextOtp[index + i] = chars[i];
+    }
+    setOtpDigits(nextOtp);
+
+    const nextIndex = Math.min(index + chars.length, OTP_LENGTH - 1);
+    focusOtpInput(nextIndex);
+  };
+
+  const handleOtpKeyDown = (index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Backspace') {
+      return;
+    }
+
+    event.preventDefault();
+    const nextOtp = [...otpDigits];
+
+    if (nextOtp[index]) {
+      nextOtp[index] = '';
+      setOtpDigits(nextOtp);
+      return;
+    }
+
+    if (index > 0) {
+      nextOtp[index - 1] = '';
+      setOtpDigits(nextOtp);
+      focusOtpInput(index - 1);
+    }
+  };
+
+  const handleOtpPaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const pastedDigits = event.clipboardData.getData('text').replace(/\D/g, '').slice(0, OTP_LENGTH);
+    if (!pastedDigits) {
+      return;
+    }
+
+    const nextOtp = Array(OTP_LENGTH).fill('');
+    pastedDigits.split('').forEach((digit, idx) => {
+      nextOtp[idx] = digit;
+    });
+    setOtpDigits(nextOtp);
+    focusOtpInput(Math.min(pastedDigits.length - 1, OTP_LENGTH - 1));
+  };
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || !('OTPCredential' in window)) {
+      return;
+    }
+
+    const abortController = new AbortController();
+
+    (navigator.credentials as any)
+      .get({
+        otp: { transport: ['sms'] },
+        signal: abortController.signal,
+      })
+      .then((credential: any) => {
+        const smsOtp = credential?.code?.replace(/\D/g, '').slice(0, OTP_LENGTH);
+        if (!smsOtp) {
+          return;
+        }
+
+        const nextOtp = Array(OTP_LENGTH).fill('');
+        smsOtp.split('').forEach((digit: string, idx: number) => {
+          nextOtp[idx] = digit;
+        });
+        setOtpDigits(nextOtp);
+        focusOtpInput(Math.min(smsOtp.length - 1, OTP_LENGTH - 1));
+      })
+      .catch(() => {
+        // Silent fail for unsupported browsers or dismissed permission prompt.
+      });
+
+    return () => {
+      abortController.abort();
+    };
+  }, []);
   // countdown timer for OTP
   const [countdown, setCountdown] = React.useState(60);
+  React.useEffect(() => {
+    focusOtpInput(0);
+  }, []);
+
   React.useEffect(() => {
     if (countdown <= 0) return;
     const timer = setInterval(() => {
@@ -28,6 +134,9 @@ export default function Login() {
   const t = useTranslations('otp');
 
   const doContinue = () => {
+    if (loading) {
+      return;
+    }
     // validate OTP
     const otpRegex = /^[0-9]{6}$/;
     if (!otpRegex.test(otp)) {
@@ -37,6 +146,9 @@ export default function Login() {
     checkOtp();
   }
   const checkOtp = async () => {
+    if (loading) {
+      return;
+    }
     try {
       setError(''); // clear previous error
       setLoading(true);
@@ -59,18 +171,24 @@ export default function Login() {
       } else {
         setError(t('invalid_otp'));
         setLoading(false);
-        // focus input        return;
-        document.querySelector('input')?.focus();
+        resetOtpInput();
         return;
       }
     } catch (e) {
       setCountdown(0); // stop countdown
       setError(t('invalid_otp'));
       setLoading(false);
-      document.querySelector('input')?.focus();
-        return;
+      resetOtpInput();
+      return;
     }
   }
+
+  React.useEffect(() => {
+    if (loading || otp.length !== OTP_LENGTH) {
+      return;
+    }
+    doContinue();
+  }, [otp, loading]);
 
   const requestOtp = async () => {
     try {
@@ -90,6 +208,8 @@ export default function Login() {
         const resData = await res.json();
         setCountdown(60); // stop countdown
         setData('ref_code', resData.ref_code);
+        setOtpDigits(Array(OTP_LENGTH).fill(''));
+        focusOtpInput(0);
       } else {
         setCountdown(60); // stop countdown
         setError(t('error_request_otp_failed'));
@@ -119,14 +239,28 @@ export default function Login() {
           {t('text_confirm_otp', { phone: data.phone?.replace(/(\d{3})(\d{3})(\d{4})/, '$1***$3') })}
         </p>
         {/* input OTP - start */}
-        <input
-          type="tel"
-          placeholder={t('placeholder_otp')}
-          className="border border-gray-300 rounded-lg font-bold py-3 px-4 w-full mb-4 font-prompt focus:outline-none focus:ring-2 focus:ring-[#F35F1A] focus:border-transparent text-xl text-center tracking-widest"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          disabled={loading}
-        />
+        <div className="flex items-center justify-center gap-2 mb-4 w-full" onPaste={handleOtpPaste}>
+          {otpDigits.map((digit, index) => (
+            <input
+              key={index}
+              ref={(element) => {
+                otpRefs.current[index] = element;
+              }}
+              type="tel"
+              autoComplete={index === 0 ? 'one-time-code' : 'off'}
+              name={index === 0 ? 'otp' : `otp-${index}`}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={digit}
+              disabled={loading}
+              onChange={(e) => handleOtpChange(index, e.target.value)}
+              onKeyDown={(e) => handleOtpKeyDown(index, e)}
+              onFocus={(e) => e.target.select()}
+              className="h-12 w-10 rounded-lg border border-gray-300 text-center text-xl font-bold font-prompt focus:outline-none focus:ring-2 focus:ring-[#F35F1A] focus:border-transparent"
+              aria-label={`OTP digit ${index + 1}`}
+            />
+          ))}
+        </div>
         <div className='flex flex-row  justify-between w-full mb-4'>
           <p className="text-gray-600 font-prompt  text-center text-sm">
             Ref : {data.ref_code}
@@ -145,7 +279,7 @@ export default function Login() {
         {/* input OTP - end */}
         {/* button continue - start */}
         <button
-          disabled={!otp || otp.length != 6 || loading}
+          disabled={otp.length !== OTP_LENGTH || loading}
           onClick={() => { doContinue() }}
           className="w-full bg-[#F35F1A] hover:bg-[#e64e0d] text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
           {loading && <Spinner className="mr-2" size="sm" light />}
