@@ -26,6 +26,8 @@ export default function Account() {
   const [fullname, setFullname] = useState(user?.fullname || '');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('setprofile');
+  const accountT = useTranslations('account');
 
   function formatDateLocal(date: Date) {
     const year = date.getFullYear()
@@ -89,8 +91,8 @@ export default function Account() {
         }
         Swal.fire({
         icon: "error",
-        title: "Oops...",
-        text: "Error updating profile. Please try again later."
+        title: accountT('error_update_title'),
+        text: accountT('error_update_text')
       });
       }else{
         console.log('Profile update successful');
@@ -103,20 +105,13 @@ export default function Account() {
       console.error('Error updating profile:', error);
       Swal.fire({
         icon: "error",
-        title: "Oops...",
-        text: "Error updating profile. Please try again later."
+        title: accountT('error_update_title'),
+        text: accountT('error_update_text')
       });
     } finally {
       setLoading(false);
     }
   };
-
-
-
-
-
-  
-  const t = useTranslations('setprofile');
 
   return (
     <div className="min-h-full w-full bg-gray-50">
@@ -127,7 +122,7 @@ export default function Account() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-base font-semibold font-prompt text-gray-800">แก้ไขโปรไฟล์</h1>
+        <h1 className="text-base font-semibold font-prompt text-gray-800">{accountT('edit_profile')}</h1>
       </div>
 
       {/* Avatar section */}
@@ -153,7 +148,7 @@ export default function Account() {
             type="text"
             className="w-full px-0 py-1.5 border-0 border-b-2 border-gray-200 focus:border-[#F35F1A] focus:outline-none font-prompt text-base text-gray-800 bg-transparent transition-colors"
             value={fullname || ''}
-            placeholder="กรอกชื่อ-นามสกุล"
+            placeholder={accountT('placeholder_fullname')}
             onChange={(e) => setFullname(e.target.value)}
           />
         </div>
@@ -167,7 +162,7 @@ export default function Account() {
             type="email"
             className="w-full px-0 py-1.5 border-0 border-b-2 border-gray-200 focus:border-[#F35F1A] focus:outline-none font-prompt text-base text-gray-800 bg-transparent transition-colors"
             value={email || ''}
-            placeholder="กรอกอีเมล"
+            placeholder={accountT('placeholder_email')}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
@@ -175,13 +170,13 @@ export default function Account() {
         {/* Date of birth */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <label className="block text-xs font-medium font-prompt text-gray-500 mb-2 uppercase tracking-wide">
-            {t('input_dob')} <span className="text-gray-400 normal-case tracking-normal text-xs">(ไม่บังคับ)</span>
+            {t('input_dob')} <span className="text-gray-400 normal-case tracking-normal text-xs">({accountT('optional')})</span>
           </label>
           <DobDatePicker
             locale={locale}
             value={selectedDate}
             onChange={setSelectedDate}
-            placeholder="เลือกวันเดือนปีเกิด"
+            placeholder={accountT('placeholder_dob')}
             inputClassName="w-full font-prompt text-sm border border-gray-300 rounded-lg px-4 py-3 bg-white text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#F35F1A]"
           />
         </div>
@@ -189,7 +184,7 @@ export default function Account() {
         {/* Gender */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <label className="block text-xs font-medium font-prompt text-gray-500 mb-3 uppercase tracking-wide">
-            {t('input_gender')} <span className="text-gray-400 normal-case tracking-normal text-xs">(ไม่บังคับ)</span>
+            {t('input_gender')} <span className="text-gray-400 normal-case tracking-normal text-xs">({accountT('optional')})</span>
           </label>
           <div className="grid grid-cols-3 gap-2">
             {[
@@ -237,10 +232,10 @@ export default function Account() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
               </svg>
-              <span>กำลังบันทึก...</span>
+              <span>{accountT('saving')}</span>
             </>
           ) : (
-            <span>บันทึกข้อมูล</span>
+            <span>{accountT('save')}</span>
           )}
         </button>
       </div>

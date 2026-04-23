@@ -52,5 +52,54 @@
     "success_title": "เรียบร้อย",
     "success_register_text": "บันทึกข้อมูลสำเร็จ ระบบจะพาไปหน้าสิทธิพิเศษ",
     "success_button": "ตกลง"
+  },
+  "account": {
+    "system_language": "ภาษาของระบบ",
+    "thai": "ภาษาไทย",
+    "english": "English",
+    "logout": "ออกจากระบบ",
+    "edit_profile": "แก้ไขโปรไฟล์",
+    "optional": "ไม่บังคับ",
+    "placeholder_fullname": "กรอกชื่อ-นามสกุล",
+    "placeholder_email": "กรอกอีเมล",
+    "placeholder_dob": "เลือกวันเดือนปีเกิด",
+    "save": "บันทึกข้อมูล",
+    "saving": "กำลังบันทึก...",
+    "error_update_title": "เกิดข้อผิดพลาด",
+    "error_update_text": "ไม่สามารถอัปเดตโปรไฟล์ได้ กรุณาลองใหม่อีกครั้ง"
+  },
+  "menubar": {
+    "home": "หน้าหลัก",
+    "coupon": "คูปอง",
+    "my_qr": "คิวอาร์ของฉัน",
+    "shopping": "ช้อปปิ้ง",
+    "settings": "ตั้งค่า"
+  },
+  "my_qrcode": {
+    "member_code": "รหัสสมาชิกของคุณ",
+    "qr_expires_in": "QR code หมดอายุใน",
+    "show_qr_to_staff": "กรุณาแสดง QR นี้ให้พนักงานเพื่อสะสมคะแนน"
+  },
+  "shopping": {
+    "search_placeholder": "ค้นหาสินค้า",
+    "searching": "กำลังค้นหา...",
+    "no_results": "ไม่พบสินค้า",
+    "no_products": "ยังไม่มีสินค้าในร้าน",
+    "loading": "กำลังโหลด...",
+    "no_image": "ไม่มีรูปสินค้า",
+    "deals_title": "ช้อปดีลเด็ดทุกวัน",
+    "product_count": "สินค้าทั้งหมด {count} รายการ",
+    "all_categories": "ทั้งหมด",
+    "sold": "sold",
+    "back": "ย้อนกลับ",
+    "loading_product": "กำลังโหลดข้อมูลสินค้า...",
+    "error_load_product": "ไม่สามารถโหลดข้อมูลสินค้าได้",
+    "not_found": "ไม่พบสินค้า",
+    "rating": "คะแนนรีวิว",
+    "sold_count": "ขายแล้ว",
+    "variants_title": "ตัวเลือกสินค้า",
+    "description_title": "รายละเอียดสินค้า",
+    "add_to_cart": "ใส่รถเข็น",
+    "buy_now": "ซื้อสินค้า"
   }
 }

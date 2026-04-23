@@ -2,6 +2,7 @@
 
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useAuth } from "../authcontext"
 import { Badge, Progress } from "flowbite-react";
 import { useEffect, useRef, useState } from 'react';
@@ -15,6 +16,7 @@ import {
 
 export default function Privilege() {
   const { user, token } = useAuth()
+  const t = useTranslations('my_qrcode')
   const imgRef = useRef(null);
   const { Canvas: QRCodeImage } = useQRCode()
   const [loading, setLoading] = useState(true);
@@ -87,7 +89,7 @@ export default function Privilege() {
           <h1 className="text-xl font-bold font-prompt text-gray-800">
             {user?.fullname || 'Member Name'}
           </h1>
-          <div className="text-lg font-bold font-prompt text-gray-600 mb-0">รหัสสมาชิกของคุณ</div>
+          <div className="text-lg font-bold font-prompt text-gray-600 mb-0">{t('member_code')}</div>
           <div className="text-xl font-bold font-prompt text-gray-600 mb-0">{memberCode}</div>
           {(!loading) ? <QrcodeCanvas
             value={qrCodeUrl}
@@ -113,13 +115,13 @@ export default function Privilege() {
           /> : <QRCodeLoaderPro size={260} cells={33} seed={123} />}
           {/* show countdown */}
           {countdown > 0 && <div className="text-sm font-prompt text-gray-600">
-            {`QR code will expire in ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}`}
+            {`${t('qr_expires_in')} ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}`}
           </div>}
 
           {/*          
            */}
           
-          <div className="text-sm font-prompt text-gray-600">กรุณาแสดง QR นี้ให้พนักงานเพื่อสะสมคะแนน</div>
+          <div className="text-sm font-prompt text-gray-600">{t('show_qr_to_staff')}</div>
         </div>
         {/* button continue - end */}
 

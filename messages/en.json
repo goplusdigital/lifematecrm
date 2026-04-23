@@ -42,5 +42,54 @@
     "success_title": "Well Done!",
     "success_register_text": "Your profile has been saved. We will take you to privileges.",
     "success_button": "Okay, Got It"
+  },
+  "account": {
+    "system_language": "Language",
+    "thai": "Thai",
+    "english": "English",
+    "logout": "Logout",
+    "edit_profile": "Edit profile",
+    "optional": "Optional",
+    "placeholder_fullname": "Enter your full name",
+    "placeholder_email": "Enter your email",
+    "placeholder_dob": "Select your date of birth",
+    "save": "Save profile",
+    "saving": "Saving...",
+    "error_update_title": "Oops...",
+    "error_update_text": "Error updating profile. Please try again later."
+  },
+  "menubar": {
+    "home": "Home",
+    "coupon": "Coupon",
+    "my_qr": "My QR",
+    "shopping": "Shopping",
+    "settings": "Settings"
+  },
+  "my_qrcode": {
+    "member_code": "Your Member Code",
+    "qr_expires_in": "QR code will expire in",
+    "show_qr_to_staff": "Please show this QR to the staff to collect points"
+  },
+  "shopping": {
+    "search_placeholder": "Search products",
+    "searching": "Searching...",
+    "no_results": "No products found",
+    "no_products": "No products available",
+    "loading": "Loading...",
+    "no_image": "No image",
+    "deals_title": "Shop Great Deals Daily",
+    "product_count": "{count} items",
+    "all_categories": "All",
+    "sold": "sold",
+    "back": "Back",
+    "loading_product": "Loading product...",
+    "error_load_product": "Unable to load product",
+    "not_found": "Product not found",
+    "rating": "review score",
+    "sold_count": "Sold",
+    "variants_title": "Options",
+    "description_title": "Product Details",
+    "add_to_cart": "Add to Cart",
+    "buy_now": "Buy Now"
   }
 }

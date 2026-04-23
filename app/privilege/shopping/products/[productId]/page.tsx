@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 type ProductDetailResponse = {
   success: boolean
@@ -50,6 +51,7 @@ export default function ProductDetailPage() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
+  const t = useTranslations('shopping')
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -92,14 +94,14 @@ export default function ProductDetailPage() {
         const json: ProductDetailResponse = await response.json()
 
         if (!response.ok || !json.success || !json.data) {
-          setError(json.error || 'ไม่สามารถโหลดข้อมูลสินค้าได้')
+          setError(json.error || t('error_load_product'))
           return
         }
 
         setProductData(json.data)
       } catch (fetchError) {
         console.error('Failed to fetch product detail:', fetchError)
-        setError('ไม่สามารถโหลดข้อมูลสินค้าได้')
+        setError(t('error_load_product'))
       } finally {
         setLoading(false)
       }
@@ -231,7 +233,7 @@ export default function ProductDetailPage() {
             type="button"
             onClick={onBack}
             className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-700"
-            aria-label="ย้อนกลับ"
+            aria-label={t('back')}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -245,14 +247,14 @@ export default function ProductDetailPage() {
               onChange={(event) => setSearchQuery(event.target.value)}
               onFocus={() => setShowSearchResults(true)}
               onBlur={() => window.setTimeout(() => setShowSearchResults(false), 120)}
-              placeholder="ค้นหาสินค้า"
+              placeholder={t('search_placeholder')}
               className="w-full h-10 rounded-full border border-gray-200 bg-[#f7f7f7] px-4 text-sm text-gray-800 focus:outline-none focus:border-[#ee4d2d]"
             />
 
             {showSearchResults && (searchLoading || searchResults.length > 0 || searchQuery.trim().length >= 2) && (
               <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-40">
                 {searchLoading ? (
-                  <div className="px-4 py-3 text-sm text-gray-500">กำลังค้นหา...</div>
+                  <div className="px-4 py-3 text-sm text-gray-500">{t('searching')}</div>
                 ) : searchResults.length > 0 ? (
                   <ul className="max-h-72 overflow-y-auto">
                     {searchResults.map((item) => (
@@ -280,7 +282,7 @@ export default function ProductDetailPage() {
                     ))}
                   </ul>
                 ) : (
-                  <div className="px-4 py-3 text-sm text-gray-500">ไม่พบสินค้า</div>
+                  <div className="px-4 py-3 text-sm text-gray-500">{t('no_results')}</div>
                 )}
               </div>
             )}
@@ -295,7 +297,7 @@ export default function ProductDetailPage() {
       <div className="bg-[#E8E8E8] min-h-screen font-prompt">
         {topBar}
         <div className="p-5">
-          <div className="bg-white rounded-2xl p-6 text-center text-gray-600">กำลังโหลดข้อมูลสินค้า...</div>
+          <div className="bg-white rounded-2xl p-6 text-center text-gray-600">{t('loading_product')}</div>
         </div>
       </div>
     )
@@ -306,7 +308,7 @@ export default function ProductDetailPage() {
       <div className="bg-[#E8E8E8] min-h-screen font-prompt">
         {topBar}
         <div className="p-5">
-          <div className="bg-white rounded-2xl p-6 text-center text-red-500">{error || 'ไม่พบสินค้า'}</div>
+          <div className="bg-white rounded-2xl p-6 text-center text-red-500">{error || t('not_found')}</div>
         </div>
       </div>
     )
@@ -323,7 +325,7 @@ export default function ProductDetailPage() {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={activeImage} alt={productData.product.name} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">ไม่มีรูปสินค้า</div>
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">{t('no_image')}</div>
           )}
         </div>
 
@@ -361,14 +363,14 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span>⭐⭐⭐⭐⭐ 5.0 คะแนนรีวิว</span>
-          <span>ขายแล้ว {formatSold(displaySoldQuantity)}</span>
+          <span>⭐⭐⭐⭐⭐ 5.0 {t('rating')}</span>
+          <span>{t('sold_count')} {formatSold(displaySoldQuantity)}</span>
           {productData.product.categoriesName && <span>{productData.product.categoriesName}</span>}
         </div>
       </div>
 
       <div className="bg-white px-4 py-4 mb-2">
-        <h2 className="text-sm font-semibold text-gray-800 mb-3">ตัวเลือกสินค้า</h2>
+        <h2 className="text-sm font-semibold text-gray-800 mb-3">{t('variants_title')}</h2>
         <div className="flex flex-wrap gap-2">
           {productData.variants.map((variant) => {
             const isSelected = selectedVariantId === variant.id
@@ -392,7 +394,7 @@ export default function ProductDetailPage() {
 
       {productData.product.description && (
         <div className="bg-white px-4 py-4">
-          <h2 className="text-sm font-semibold text-gray-800 mb-2">รายละเอียดสินค้า</h2>
+          <h2 className="text-sm font-semibold text-gray-800 mb-2">{t('description_title')}</h2>
           <div
             className="text-gray-700 text-sm leading-relaxed space-y-2 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
             dangerouslySetInnerHTML={{ __html: productData.product.description }}
@@ -415,14 +417,14 @@ export default function ProductDetailPage() {
             disabled
             className="col-span-1 rounded-lg border border-gray-300 text-gray-400 font-semibold text-sm py-3 cursor-not-allowed"
           >
-            ใส่รถเข็น
+            {t('add_to_cart')}
           </button>
           <button
             type="button"
             disabled
             className="col-span-2 rounded-lg bg-gray-300 text-gray-400 font-semibold text-sm py-3 cursor-not-allowed"
           >
-            ซื้อสินค้า
+            {t('buy_now')}
           </button>
         </div>
       </div>

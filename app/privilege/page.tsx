@@ -78,7 +78,7 @@ export default function Privilege() {
 
             <div className="flex flex-row w-full justify-between text-gray-400 mb-2">
               <div className="flex flex-col">
-                <span className="text-md">รหัสสมาชิก: {user?.member_code || '-'}</span>
+                <span className="text-md">รหัสสมาชิก {user?.member_code || '-'}</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-md">คะแนน</span>

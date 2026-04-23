@@ -1,13 +1,13 @@
 "use client"
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBagShopping, faCircleUser, faEllipsisVertical, faHouse, faQrcode, faScrewdriverWrench, faTicket } from '@fortawesome/free-solid-svg-icons';
+import { faBagShopping, faCircleUser, faHouse, faQrcode, faTicket } from '@fortawesome/free-solid-svg-icons';
+import { useTranslations } from 'next-intl';
+
 export default function Menubar() {
-    const router = useRouter();
     const currentPath = usePathname();
+    const t = useTranslations('menubar');
 
    
     
@@ -19,11 +19,11 @@ export default function Menubar() {
                     <Link href={'/privilege'} className={`flex flex-col items-center ${currentPath === '/privilege' ? 'text-[#F35F1A]' : 'text-gray-800 opacity-50'}`}>
                        
                         <FontAwesomeIcon icon={faHouse} size='xl' className='mb-2' />
-                        <span className="text-xs">Home</span>
+                        <span className="text-xs">{t('home')}</span>
                     </Link>
                     <Link href="/privilege/coupon" className={`flex flex-col items-center ${currentPath === '/privilege/coupon' ? 'text-[#F35F1A]' : 'text-gray-800 opacity-50'}`}>
                          <FontAwesomeIcon icon={faTicket} size='xl' className='mb-2' />
-                         <span className="text-xs">Coupon</span>
+                        <span className="text-xs">{t('coupon')}</span>
                     </Link>
                     {/* <div className="flex flex-col items-center relative w-20"  >
                         <Link href="/privilege/my-qrcode" className="w-22 h-22 rounded-full bg-[#ffffff] flex flex-col items-center justify-center shadow-md absolute -top-12 left-1/2 transform -translate-x-1/2 overflow-hidden border-4 border-gray-200">
@@ -36,17 +36,17 @@ export default function Menubar() {
                     </div> */}
                     <Link href="/privilege/my-qrcode" className={`flex flex-col items-center ${currentPath === '/privilege/my-qrcode' ? 'text-[#F35F1A]' : 'text-gray-800 opacity-50'}`}>
                         <FontAwesomeIcon icon={faQrcode} size='xl' className='mb-2' />
-                        <span className="text-xs">My QR</span>
+                        <span className="text-xs">{t('my_qr')}</span>
                     </Link>
                     <Link href="/privilege/shopping" className={`flex flex-col items-center ${currentPath.startsWith('/privilege/shopping') ? 'text-[#F35F1A]' : 'text-gray-800 opacity-50'}`}>
                         <FontAwesomeIcon icon={faBagShopping} size='xl' className='mb-2' />
-                        <span className="text-xs">Shopping</span>
+                        <span className="text-xs">{t('shopping')}</span>
                     </Link>
                     <Link href="/privilege/account" className={`flex flex-col items-center ${currentPath.startsWith('/privilege/account') ? 'text-[#F35F1A]' : 'text-gray-800 opacity-50'}`}>
 
                         <FontAwesomeIcon icon={faCircleUser} size='xl' className='mb-2' />
                         
-                        <span className="text-xs">Settings</span>
+                        <span className="text-xs">{t('settings')}</span>
                     </Link>
                 </div>
             </footer>)
