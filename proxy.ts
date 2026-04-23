@@ -4,6 +4,41 @@ import { jwtVerify } from 'jose'
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
 
+async function checkMemberExists(req: NextRequest, phone_no: string): Promise<boolean> {
+  const origin = req.nextUrl.origin
+  const host = req.headers.get('x-forwarded-host') || req.headers.get('host')
+  const protocol = req.headers.get('x-forwarded-proto') || req.nextUrl.protocol.replace(':', '')
+
+  const tryRequest = async (baseUrl: string) => {
+    const res = await fetch(`${baseUrl}/api/me`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone_no }),
+    })
+
+    if (!res.ok) {
+      return false
+    }
+
+    const data = await res.json()
+    return !!data.exists
+  }
+
+  try {
+    return await tryRequest(origin)
+  } catch (err: any) {
+    const isTlsPacketError =
+      err?.cause?.code === 'ERR_SSL_PACKET_LENGTH_TOO_LONG' ||
+      String(err?.message || '').toLowerCase().includes('fetch failed')
+
+    if (!isTlsPacketError || !host || protocol !== 'https') {
+      throw err
+    }
+
+    return await tryRequest(`http://${host}`)
+  }
+}
+
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname
   // skip all image, api, _next, favicon.ico
@@ -28,7 +63,7 @@ export async function proxy(req: NextRequest) {
   // 🔥 กัน loop ก่อน
   if (
     pathname === '/setprofile' ||
-    pathname === '/privilege' ||
+    pathname.startsWith('/privilege') ||
     pathname.startsWith('/receipt') ||
     pathname.startsWith('/claim') ||
     pathname.startsWith('/api') ||
@@ -57,20 +92,9 @@ export async function proxy(req: NextRequest) {
       return NextResponse.redirect(new URL('/setprofile', req.url))
     }
 
-    // 🔥 call API check member
-    const res = await fetch(`${req.nextUrl.origin}/api/me`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone_no }),
-    })
+    const exists = await checkMemberExists(req, phone_no)
 
-    if (!res.ok) {
-      return NextResponse.redirect(new URL('/setprofile', req.url))
-    }
-
-    const data = await res.json()
-
-    if (data.exists) {
+    if (exists) {
         // skip if url starts with /privilege or /setprofile
         if (pathname.startsWith('/privilege')) {
             return NextResponse.next()
@@ -80,8 +104,10 @@ export async function proxy(req: NextRequest) {
       return NextResponse.redirect(new URL('/setprofile', req.url))
     }
 
-  } catch (err) {
+  } catch (err: any) {
     console.error(err)
-    return NextResponse.redirect(new URL('/setprofile', req.url))
+    const res = NextResponse.redirect(new URL('/', req.url))
+    res.cookies.delete('token')
+    return res
   }
 }

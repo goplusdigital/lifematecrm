@@ -103,9 +103,17 @@ export default function Privilege() {
           </div>
         </div>
       </div>
-      <div className="flex-1 p-5 gap-4 bg-[#E8E8E8]">
-        <h2 className="text-lg font-bold font-prompt text-gray-800 mb-4">สินค้าที่น่าสนใจ</h2>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="flex-1 px-2 pb-24 pt-2 bg-[#f5f5f5]">
+        <div className="flex items-center justify-between mb-4 px-1">
+          <h2 className="text-lg font-bold font-prompt text-gray-800">สินค้าที่น่าสนใจ</h2>
+          <Link href="/privilege/shopping" className="inline-flex items-center gap-1 font-prompt text-sm font-semibold text-[#ee4d2d] hover:underline">
+            <span>สินค้าทั้งหมด</span>
+            <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M7.22 4.47a.75.75 0 011.06 0l4.999 5a.75.75 0 010 1.06l-5 5a.75.75 0 11-1.06-1.06L11.69 10 7.22 5.53a.75.75 0 010-1.06z" clipRule="evenodd" />
+            </svg>
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
           {topProducts.map((item) => {
             const canNavigate = Boolean(item.productId) && Boolean(item.id)
             const productHref = canNavigate
@@ -116,10 +124,10 @@ export default function Privilege() {
             <Link
               key={item.id}
               href={productHref}
-              className="bg-[#ffffff] rounded-2xl shadow-md border border-gray-100 p-3 block"
+              className="bg-white border border-[#f0f0f0] rounded-sm overflow-hidden block"
               aria-disabled={!canNavigate}
             >
-              <span className="block w-full aspect-square rounded-xl overflow-hidden bg-gray-100 mb-3">
+              <span className="block w-full aspect-square overflow-hidden bg-gray-100">
                 {item.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -129,16 +137,22 @@ export default function Privilege() {
                     loading="lazy"
                   />
                 ) : (
-                  <span className="w-full h-full flex items-center justify-center text-gray-400 text-sm font-prompt">
+                  <span className="w-full h-full flex items-center justify-center text-gray-400 text-xs font-prompt">
                     ไม่มีรูปสินค้า
                   </span>
                 )}
               </span>
-              <span className="block rounded-xl border border-gray-100 px-3 py-2 font-prompt">
-                <p className="text-gray-800 font-semibold text-sm line-clamp-2">{item.productName}</p>
-                <p className="text-gray-600 text-sm line-clamp-1 mb-1">{item.name}</p>
-                <p className="text-[#0093e8] font-bold text-base">฿ {formatPrice(item.price)}</p>
-                </span>
+              <span className="block px-2.5 py-2.5 font-prompt">
+                <div className="flex items-center gap-1 mb-1.5">
+                  <span className="text-[10px] font-semibold uppercase px-1 py-[1px] rounded bg-[#fff1ee] text-[#ee4d2d]">Mall</span>
+                  <span className="text-[10px] text-gray-400">Lifemate</span>
+                </div>
+                <p className="text-gray-800 text-[13px] leading-5 line-clamp-2 min-h-[2.5rem]">{item.productName}</p>
+                <p className="text-gray-500 text-xs line-clamp-1 mt-0.5 mb-1">{item.name}</p>
+                <div className="flex items-end justify-between mt-1">
+                  <p className="text-[#ee4d2d] font-semibold text-base">฿ {formatPrice(item.price)}</p>
+                </div>
+              </span>
             </Link>
             )
           })}

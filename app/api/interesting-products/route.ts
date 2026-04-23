@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { pool } from '@/lib/db'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { NodeHttpHandler } from '@smithy/node-http-handler'
+import dns from 'node:dns'
+import https from 'node:https'
 
 export const runtime = 'nodejs'
 
@@ -33,6 +36,49 @@ const getS3Endpoint = () => {
   return (process.env.S3_ENDPOINT || process.env.AWS_S3_ENDPOINT || '').trim()
 }
 
+const getS3LookupIp = () => {
+  return (process.env.S3_LOOKUP_IP || '').trim()
+}
+
+const getS3LookupHost = (endpoint: string) => {
+  const configuredHost = (process.env.S3_LOOKUP_HOST || '').trim().toLowerCase()
+  if (configuredHost) return configuredHost
+
+  if (endpoint) {
+    try {
+      return new URL(endpoint).hostname.toLowerCase()
+    } catch {
+      // fall through to default host
+    }
+  }
+
+  return 's3.goplus.co.th'
+}
+
+const createS3RequestHandler = (endpoint: string) => {
+  const forcedIp = getS3LookupIp()
+  if (!forcedIp) return undefined
+
+  const forcedHost = getS3LookupHost(endpoint)
+  const httpsAgent = new https.Agent({
+    lookup: (hostname, options, callback) => {
+      if (hostname.toLowerCase() === forcedHost) {
+        if (typeof options === 'object' && options?.all) {
+          callback(null, [{ address: forcedIp, family: 4 }])
+          return
+        }
+
+        callback(null, forcedIp, 4)
+        return
+      }
+
+      dns.lookup(hostname, options as never, callback as never)
+    },
+  })
+
+  return new NodeHttpHandler({ httpsAgent })
+}
+
 const getSignedUrlExpiresIn = () => {
   const parsed = Number(process.env.S3_SIGNED_URL_EXPIRES_IN || 3600)
   if (!Number.isFinite(parsed) || parsed <= 0) return 3600
@@ -44,10 +90,12 @@ const createS3Client = () => {
   const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY
   const sessionToken = process.env.AWS_SESSION_TOKEN
   const endpoint = getS3Endpoint()
+  const requestHandler = createS3RequestHandler(endpoint)
 
   const baseConfig = {
     region: getS3Region(),
     ...(endpoint ? { endpoint, forcePathStyle: true } : {}),
+    ...(requestHandler ? { requestHandler } : {}),
   }
 
   if (accessKeyId && secretAccessKey) {

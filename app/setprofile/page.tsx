@@ -4,7 +4,12 @@ import RegisterForm from "./register"
 import { cookies } from 'next/headers'
 import { jwtVerify } from 'jose'
 import { redirect } from 'next/navigation'
+import { getServerBaseUrl } from '@/lib/server-base-url'
 
+// ✅ Server Action for cookie deletion
+export async function deleteCookie() {
+  // (await cookies()).delete('token')
+}
 
 export default async function Register() {
   const token = (await cookies()).get('token')?.value
@@ -12,11 +17,12 @@ export default async function Register() {
   if (!token) return null
 
   let profileExists = false
+  const baseUrl = await getServerBaseUrl()
 
   // check is registered
   try {
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/profile`, {
+    const res = await fetch(`${baseUrl}/api/profile`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -33,12 +39,12 @@ export default async function Register() {
       }
     } else {
       // delete cookie
-      (await cookies()).delete('token');
+      await deleteCookie();
       return null
     }
 
   } catch (err) {
-    (await cookies()).delete('token');
+    await deleteCookie();
     console.error('error fetching profile', err);
     return null
   }
@@ -53,7 +59,7 @@ export default async function Register() {
     const verified = await jwtVerify(token, secret)
     payload = verified.payload
   } catch {
-    (await cookies()).delete('token')
+    await deleteCookie()
     return null
   }
 

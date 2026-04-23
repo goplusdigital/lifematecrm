@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import LoadFail from '../../privilege/fail'
 import { AuthProvider } from '../../privilege/authcontext'
 import Menubar from '../../privilege/menubar'
-
+import { getServerBaseUrl } from '@/lib/server-base-url'
 
 
 export default async function RootLayout({
@@ -16,8 +16,9 @@ export default async function RootLayout({
 }>) {
     const token = (await cookies()).get('token')?.value
     let data : any = {}
+    const baseUrl = await getServerBaseUrl()
     // check is registered
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/profile`, {
+    const res = await fetch(`${baseUrl}/api/profile`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -29,7 +30,7 @@ export default async function RootLayout({
          data = await res.json();
         console.log('profile data', data);
         if (!data.exists) {
-            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/logout`, {
+            await fetch(`${baseUrl}/api/logout`, {
                 method: 'POST',
             })
             redirect('/');
@@ -41,7 +42,15 @@ export default async function RootLayout({
     if (!token) return null
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
-    const { payload } = await jwtVerify(token, secret)
+    let payload: any
+    try {
+        const verified = await jwtVerify(token, secret)
+        payload = verified.payload
+    } catch {
+        const cookieStore = await cookies()
+        cookieStore.delete('token')
+        redirect('/')
+    }
     let user = { ...data, phone_no: payload.phone_no }
     const setUser = (userData: any) => {
         user = { ...user, ...userData }

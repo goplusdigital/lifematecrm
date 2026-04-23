@@ -91,11 +91,18 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
 
 
   async function handleLogout() {
-    await fetch('/api/logout', {
-      method: 'POST',
-    })
-
-    window.location.href = '/'
+    try {
+      const res = await fetch('/api/logout', {
+        method: 'POST',
+      });
+      
+      if (res.ok) {
+        // Clear any local storage if needed
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   }
 
 

@@ -353,11 +353,11 @@ export default function ProductDetailPage() {
 
         <div className="flex items-center gap-2 mb-2">
           <p className="text-[#ee4d2d] text-2xl font-bold">{displayPrice}</p>
-          {discountPercent && (
+          {/* {discountPercent && (
             <span className="text-xs font-semibold px-2 py-1 rounded bg-[#fff1ee] text-[#ee4d2d]">
               ลด {discountPercent}%
             </span>
-          )}
+          )} */}
         </div>
 
         <div className="flex items-center gap-3 text-xs text-gray-500">
@@ -403,7 +403,7 @@ export default function ProductDetailPage() {
       <div className="fixed bottom-[80px] left-0 right-0 bg-white border-t border-gray-200 p-3 z-10">
         <div className="max-w-md mx-auto grid grid-cols-4 gap-2">
           <a
-            href="https://shopee.co.th/lifematewellness#product_list"
+            href="https://s.shopee.co.th/9Uxfvw5A7F"
             target="_blank"
             rel="noopener noreferrer"
             className="col-span-1 flex items-center justify-center rounded-lg border border-[#ee4d2d] bg-white py-2"
