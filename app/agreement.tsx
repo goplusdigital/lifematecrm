@@ -4,6 +4,8 @@ import React from "react";
 import { useLocale } from '@/lib/locale';
 import { useStore } from '@/lib/store';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { Spinner } from 'flowbite-react';
 
 import AgreementTHContent from '@/lib/agreement/th';
 import AgreementENContent from '@/lib/agreement/en';
@@ -17,7 +19,9 @@ export default function AgreementAccepted(
   const t = useTranslations('agreement');
   const [acceptedPDPA, setAcceptedPDPA] = React.useState(false);
   const [acceptMarketting, setAcceptMarketting] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const doContinue = () => {
+    setLoading(true);
     // send state to next step
     setData('acceptedPDPA', acceptedPDPA);
     setData('acceptMarketting', acceptMarketting);
@@ -30,9 +34,7 @@ export default function AgreementAccepted(
       <header className="flex-none p-2 bg-white border-t border-gray-100">
         <div className="flex justify-between gap-2">
           <div className="flex justify-start gap-2 mb-2">
-            <h1 className="text-xl font-bold font-prompt text-gray-800">
-              Lifemate CRM
-            </h1>
+            <Image src="/logo.jpg" alt="Lifemate CRM" width={140} height={48} className="h-10 w-auto object-contain" priority />
           </div>
           <div className="flex justify-end gap-2 mb-2">
             <button onClick={() => setLocale('th')} className={`px-3 py-1 text-sm font-prompt  rounded ${locale == 'th' ? 'bg-[#F35F1A] text-white' : 'bg-gray-200 text-gray-700'}`}>
@@ -72,10 +74,11 @@ export default function AgreementAccepted(
         </div>
 
         <button
-          disabled={!acceptedPDPA || !acceptMarketting}
+          disabled={!acceptedPDPA || !acceptMarketting || loading}
           onClick={() => { doContinue() }}
           className="w-full bg-[#F35F1A] hover:bg-[#e64e0d] text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
-          {t('continue')}
+          {loading && <Spinner className="mr-2 inline" size="sm" light />}
+          {t('continue')}{loading && <>...</>}
         </button>
       </footer>
 

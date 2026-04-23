@@ -5,6 +5,7 @@ import { useLocale } from '@/lib/locale';
 import { useStore } from '@/lib/store';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { Spinner } from 'flowbite-react';
 
 export default function Login() {
 
@@ -14,6 +15,11 @@ export default function Login() {
   const [phone, setPhone] = React.useState('');
   const [error, setError] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+
+  const handlePhoneChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
+    setPhone(digitsOnly);
+  };
  
 
   const t = useTranslations('agreement');
@@ -49,11 +55,11 @@ export default function Login() {
         router.push('/otp');
       } else {
         setError(t('error_request_otp_failed'));
-        setLoading(true);
+        setLoading(false);
       }
     } catch (e) {
       setError(t('error_request_otp_failed'));
-      setLoading(true);
+      setLoading(false);
       return;
     }
 
@@ -76,10 +82,14 @@ export default function Login() {
         {/* input phone number - start */}
         <input
           type="tel"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={10}
+          readOnly={loading}
           placeholder={t('placeholder_phone')}
           className="border border-gray-300 rounded-lg font-bold py-3 px-4 w-full mb-4 font-prompt focus:outline-none focus:ring-2 focus:ring-[#F35F1A] focus:border-transparent text-xl"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) => handlePhoneChange(e.target.value)}
         />
         {error && <p className="text-red-500 text-sm mb-4 font-prompt text-xs">{error}</p>}
         {/* input phone number - end */}
@@ -88,7 +98,8 @@ export default function Login() {
           disabled={!phone || loading}
           onClick={() => { doContinue() }}
           className="w-full bg-[#F35F1A] hover:bg-[#e64e0d] text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
-          {t('continue')}
+          {loading && <Spinner className="mr-2 inline" size="sm" light />}
+          {t('continue')}{loading && <>...</>}
         </button>
         {/* button continue - end */}
         
