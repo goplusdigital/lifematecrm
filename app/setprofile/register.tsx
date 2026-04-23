@@ -148,17 +148,17 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
 
 
   return (
-    <div className="flex flex-col h-dvh w-full overflow-y-auto bg-[#EEE9E1]">
-      <div className="flex flex-col items-center justify-center bg-[#ffffff] rounded-lg shadow-lg m-4 mx-8 mb-8 mt-16 p-8 relative">
+    <div className="ci-bg flex flex-col h-dvh w-full overflow-y-auto">
+      <div className="ci-card flex flex-col items-center justify-center rounded-xl m-5 mx-7 mb-8 mt-18 p-8 relative">
         {/* logo circle center - start */}
-        <div className="w-24 h-24 rounded-full bg-[#F5CBA7] flex items-center justify-center shadow-md absolute -top-12 left-1/2 transform -translate-x-1/2 overflow-hidden border-4 border-gray-200">
+        <div className="w-24 h-24 rounded-full bg-[#f4f0e6] flex items-center justify-center shadow-md absolute -top-12 left-1/2 transform -translate-x-1/2 overflow-hidden border-4 border-[#e4e0d4]">
           <Image src="/logo.jpg" alt="Logo" width={48} height={48} className='w-full h-full object-cover' />
         </div>
         {/* logo circle center - end */}
-        <h1 className="text-xl font-bold font-prompt text-gray-800 mt-12">
+        <h1 className="text-[30px] leading-none font-black font-prompt text-gray-900 mt-12 tracking-tight text-center">
           {t('set_profile')}
         </h1>
-        <p className="text-gray-600 font-prompt mt-2 mb-6 text-center text-sm">
+        <p className="text-gray-600 font-prompt mt-2 mb-6 text-center text-sm max-w-[18rem]">
           {t('text_set_profile')}
         </p>
         {/* input phone - start */}
@@ -169,7 +169,7 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
           <input
             type="tel"
             placeholder={t('input_phone')}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[#F35F1A] font-prompt text-sm"
+            className="w-full border border-[#d8d4c8] rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--ci-orange)] font-prompt text-sm bg-white"
             value={phone}
             readOnly
           />
@@ -183,7 +183,7 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
           <input
             type="text"
             placeholder={t('input_fullname')}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[#F35F1A] font-prompt text-sm"
+            className="w-full border border-[#d8d4c8] rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--ci-orange)] font-prompt text-sm bg-white"
             value={fullname}
             onChange={(e) => setFullname(e.target.value)}
           />
@@ -198,7 +198,7 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
           <input
             type="email"
             placeholder={t('input_email')}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[#F35F1A] font-prompt text-sm"
+            className="w-full border border-[#d8d4c8] rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--ci-orange)] font-prompt text-sm bg-white"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -223,16 +223,16 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
             {t('input_gender')} <i className="text-gray-500">(ไม่บังคับ)</i>
           </label>
           <div className="flex items-center justify-between gap-4 mb-4 font-prompt">
-            <button className={`bg-[#F35F1A] text-gray-800 font-bold py-1 px-4 rounded-md w-full text-center text-md ${gender === 'male' ? 'bg-[#F35F1A] text-white' : 'bg-[#ffffff] border border-gray-300 text-gray-800'}`} onClick={() => { setGender('male') }}>
+            <button className={`font-bold py-1 px-4 rounded-md w-full text-center text-md transition-colors ${gender === 'male' ? 'ci-btn-primary text-white' : 'bg-[#ffffff] border border-[#d8d4c8] text-gray-800 hover:border-[var(--ci-orange)]'}`} onClick={() => { setGender('male') }}>
               <div className="text-center">{t('gender_male')}</div>
             </button>
-            <button className={`bg-[#F35F1A] text-gray-800 font-bold py-1 px-4 rounded-md w-full text-center text-md ${gender === 'female' ? 'bg-[#F35F1A] text-white' : 'bg-[#ffffff] border border-gray-300 text-gray-800'}`} onClick={() => { setGender('female') }}>
+            <button className={`font-bold py-1 px-4 rounded-md w-full text-center text-md transition-colors ${gender === 'female' ? 'ci-btn-primary text-white' : 'bg-[#ffffff] border border-[#d8d4c8] text-gray-800 hover:border-[var(--ci-orange)]'}`} onClick={() => { setGender('female') }}>
               <div className="text-center">{t('gender_female')}</div>
             </button>
             {/* <button className={`bg-[#F35F1A] text-gray-800 font-bold py-1 px-4 rounded-md w-full text-center text-md ${gender === 'lgbtq+' ? 'bg-[#F35F1A] text-white' : 'bg-[#ffffff] border border-gray-300 text-gray-800'}`} onClick={() => { setGender('lgbtq+') }}>
               <div className="text-center">{t('gender_lgbtq')}</div>
             </button> */}
-            <button className={`bg-[#F35F1A] text-gray-800 font-bold py-1 px-4 rounded-md w-full text-center text-md ${gender === 'no-specific' ? 'bg-[#F35F1A] text-white' : 'bg-[#ffffff] border border-gray-300 text-gray-800'}`} onClick={() => { setGender('no-specific') }}>
+            <button className={`font-bold py-1 px-4 rounded-md w-full text-center text-md transition-colors ${gender === 'no-specific' ? 'ci-btn-primary text-white' : 'bg-[#ffffff] border border-[#d8d4c8] text-gray-800 hover:border-[var(--ci-orange)]'}`} onClick={() => { setGender('no-specific') }}>
               <div className="text-center">{t('gender_other')}</div>
             </button>
           </div>
@@ -242,7 +242,7 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
         <button
           disabled={loading || !fullname || !email}
           onClick={() => { doContinue() }}
-          className="w-full bg-[#F35F1A] hover:bg-[#e64e0d] text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
+          className="ci-btn-primary w-full text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
           {loading && <Spinner className="mr-2" size="sm" light />}
           {t('continue')}{loading && <>...</>}
         </button>
@@ -292,7 +292,7 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
                 <button
                   type="button"
                   onClick={handleCloseSuccessModal}
-                  className="w-full rounded-lg bg-green-500 px-4 py-3 text-sm font-medium text-white hover:bg-green-600 sm:w-auto"
+                  className="ci-btn-primary w-full px-4 py-3 text-sm font-medium text-white sm:w-auto"
                 >
                   {t('success_button')}
                 </button>

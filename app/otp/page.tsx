@@ -225,17 +225,17 @@ export default function Login() {
   }
 
   return (
-    <div className="flex flex-col h-dvh w-full overflow-hidden bg-[#EEE9E1]">
-      <div className="flex flex-col items-center justify-center bg-[#ffffff] rounded-lg shadow-lg m-4 mx-8 mb-8 mt-16 p-8 relative">
+    <div className="ci-bg flex flex-col h-dvh w-full overflow-hidden">
+      <div className="ci-card flex flex-col items-center justify-center rounded-xl m-5 mx-7 mb-8 mt-18 p-8 relative">
         {/* logo circle center - start */}
-        <div className="w-24 h-24 rounded-full bg-[#F5CBA7] flex items-center justify-center shadow-md absolute -top-12 left-1/2 transform -translate-x-1/2 overflow-hidden border-4 border-gray-200">
+        <div className="w-24 h-24 rounded-full bg-[#f4f0e6] flex items-center justify-center shadow-md absolute -top-12 left-1/2 transform -translate-x-1/2 overflow-hidden border-4 border-[#e4e0d4]">
           <Image src="/logo.jpg" alt="Logo" width={48} height={48} className='w-full h-full object-cover' />
         </div>
         {/* logo circle center - end */}
-        <h1 className="text-xl font-bold font-prompt text-gray-800 mt-12">
+        <h1 className="text-[30px] leading-none font-black font-prompt text-gray-900 mt-12 tracking-tight text-center">
           {t('confirm_otp')}
         </h1>
-        <p className="text-gray-600 font-prompt mt-2 mb-6 text-center text-sm">
+        <p className="text-gray-600 font-prompt mt-2 mb-6 text-center text-sm max-w-[18rem]">
           {t('text_confirm_otp', { phone: data.phone?.replace(/(\d{3})(\d{3})(\d{4})/, '$1***$3') })}
         </p>
         {/* input OTP - start */}
@@ -256,32 +256,32 @@ export default function Login() {
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleOtpKeyDown(index, e)}
               onFocus={(e) => e.target.select()}
-              className="h-12 w-10 rounded-lg border border-gray-300 text-center text-xl font-bold font-prompt focus:outline-none focus:ring-2 focus:ring-[#F35F1A] focus:border-transparent"
+              className="h-12 w-10 rounded-lg border border-[#d8d4c8] text-center text-xl font-bold font-prompt focus:outline-none focus:ring-2 focus:ring-[var(--ci-orange)] focus:border-transparent bg-white"
               aria-label={`OTP digit ${index + 1}`}
             />
           ))}
         </div>
-        <div className='flex flex-row  justify-between w-full mb-4'>
-          <p className="text-gray-600 font-prompt  text-center text-sm">
+        <div className='flex flex-row justify-between w-full mb-4'>
+          <p className="text-gray-600 font-prompt text-center text-sm">
             Ref : {data.ref_code}
           </p>
           {countdown > 0 ? (
-            <p className="text-gray-600 font-prompt  text-center text-sm">
+            <p className="text-gray-600 font-prompt text-center text-sm">
               {t('resend_otp_in')} {countdown}s
             </p>
           ) : (
-            <button onClick={() => requestOtp()} className="text-[#F35F1A] font-prompt text-sm" disabled={loading}>
+            <button onClick={() => requestOtp()} className="text-[var(--ci-orange)] font-prompt text-sm font-semibold" disabled={loading}>
               {t('resend_otp')}
             </button>
           )}
         </div>
-        {error && <p className="text-red-500 text-sm mb-4  font-prompt text-xs">{error}</p>}
+        {error && <p className="text-red-500 text-sm mb-4 font-prompt text-xs">{error}</p>}
         {/* input OTP - end */}
         {/* button continue - start */}
         <button
           disabled={otp.length !== OTP_LENGTH || loading}
           onClick={() => { doContinue() }}
-          className="w-full bg-[#F35F1A] hover:bg-[#e64e0d] text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
+          className="ci-btn-primary w-full text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
           {loading && <Spinner className="mr-2" size="sm" light />}
           {t('continue')}{loading && <>...</>}
         </button>

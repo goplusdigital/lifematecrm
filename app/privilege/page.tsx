@@ -44,27 +44,26 @@ export default function Privilege() {
     return new Intl.NumberFormat('th-TH').format(value)
   }
 
-  console.log(user)
   return (
     <>
-      <div className="flex-1 flex flex-row items-start justify-start p-5 pb-10 gap-4 bg-[#0093e8] relative">
+      <div className="ci-bg flex-1 flex flex-row items-start justify-start p-5 pb-12 gap-4 relative ">
         {/* logo circle center - start */}
-        <div className="w-16 h-16 rounded-full bg-[#f4f6f7] flex items-center justify-center shadow-md overflow-hidden border-4 border-gray-200">
+        <div className="w-16 h-16 rounded-full bg-[#f4f0e6] flex items-center justify-center shadow-md overflow-hidden border-4 border-[#e4e0d4]">
           <Image src="/logo.jpg" alt="Logo" width={48} height={48} className='w-full h-full object-cover' />
         </div>
         {/* logo circle center - end */}
         {/* Name of Merchant */}
         <div>
-          <h1 className="text-2xl font-bold font-prompt text-white mt-2">
-            Lifematewellness
+          <h1 className="text-2xl font-black font-prompt text-gray-900 mt-2 tracking-tight">
+            Lifemate Wellness
           </h1>
-          <p className="text-white  font-prompt">สิทธิพิเศษสำหรับสมาชิก</p>
+          <p className="text-gray-700 font-prompt">สิทธิพิเศษสำหรับสมาชิก</p>
         </div>
         {/* Phone number */}
 
 
       </div>
-      <div className="w-full relative mb-35">
+      <div className="w-full relative mb-45 mt-10 bg-[#f4f0e6]">
         <div className="absolute w-full -top-10 left-0 px-5">
           <div className="flex flex-col w-full text-gray-800 font-prompt bg-[#ffffff] px-4 py-6 rounded-lg shadow-md ">
             <div className="flex flex-row w-full justify-between mb-2">
@@ -79,7 +78,7 @@ export default function Privilege() {
 
             <div className="flex flex-row w-full justify-between text-gray-400 mb-2">
               <div className="flex flex-col">
-                <span className="text-md">{user?.phone_no || '-'}</span>
+                <span className="text-md">รหัสสมาชิก: {user?.member_code || '-'}</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-md">คะแนน</span>
@@ -103,7 +102,7 @@ export default function Privilege() {
           </div>
         </div>
       </div>
-      <div className="flex-1 px-2 pb-24 pt-2 bg-[#f5f5f5]">
+      <div className="flex-1 px-3 pb-24 pt-2 bg-[#f7f4ee]">
         <div className="flex items-center justify-between mb-4 px-1">
           <h2 className="text-lg font-bold font-prompt text-gray-800">สินค้าที่น่าสนใจ</h2>
           <Link href="/privilege/shopping" className="inline-flex items-center gap-1 font-prompt text-sm font-semibold text-[#ee4d2d] hover:underline">

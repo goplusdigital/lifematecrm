@@ -1,17 +1,27 @@
 "use client"
 
 
-import Image from "next/image";
 import { useAuth } from "../authcontext"
-import { Badge, Progress } from "flowbite-react";
-import { useEffect, useRef } from 'react';
-import { useQRCode } from 'next-qrcode'
 import Link from "next/link";
+import { useLocale } from '@/lib/locale';
 
 export default function Account() {
   const { user } = useAuth()
-  const imgRef = useRef(null);
-  const { Canvas: QRCodeImage } = useQRCode()
+  const { locale, setLocale } = useLocale();
+
+  const copy = locale === 'en'
+    ? {
+        systemLanguage: 'Language',
+        thai: 'Thai',
+        english: 'English',
+        logout: 'Logout',
+      }
+    : {
+        systemLanguage: 'ภาษาของระบบ',
+        thai: 'ภาษาไทย',
+        english: 'English',
+        logout: 'ออกจากระบบ',
+      }
 
 async function handleLogout() {
     await fetch('/api/logout', {
@@ -34,20 +44,40 @@ async function handleLogout() {
             </div>
             <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path></svg>
           </Link>
-          <button className="flex items-center justify-between hover:bg-gray-100 transition-colors p-4  border-b border-gray-200 opacity-50 cursor-not-allowed">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 gap-4">
             <div className="text-sm flex justify-start items-center space-x-4">
               <svg className="w-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M192 64C209.7 64 224 78.3 224 96L224 128L352 128C369.7 128 384 142.3 384 160C384 177.7 369.7 192 352 192L342.4 192L334 215.1C317.6 260.3 292.9 301.6 261.8 337.1C276 345.9 290.8 353.7 306.2 360.6L356.6 383L418.8 243C423.9 231.4 435.4 224 448 224C460.6 224 472.1 231.4 477.2 243L605.2 531C612.4 547.2 605.1 566.1 589 573.2C572.9 580.3 553.9 573.1 546.8 557L526.8 512L369.3 512L349.3 557C342.1 573.2 323.2 580.4 307.1 573.2C291 566 283.7 547.1 290.9 531L330.7 441.5L280.3 419.1C257.3 408.9 235.3 396.7 214.5 382.7C193.2 399.9 169.9 414.9 145 427.4L110.3 444.6C94.5 452.5 75.3 446.1 67.4 430.3C59.5 414.5 65.9 395.3 81.7 387.4L116.2 370.1C132.5 361.9 148 352.4 162.6 341.8C148.8 329.1 135.8 315.4 123.7 300.9L113.6 288.7C102.3 275.1 104.1 254.9 117.7 243.6C131.3 232.3 151.5 234.1 162.8 247.7L173 259.9C184.5 273.8 197.1 286.7 210.4 298.6C237.9 268.2 259.6 232.5 273.9 193.2L274.4 192L64.1 192C46.3 192 32 177.7 32 160C32 142.3 46.3 128 64 128L160 128L160 96C160 78.3 174.3 64 192 64zM448 334.8L397.7 448L498.3 448L448 334.8z"/></svg>
-              <div>ภาษาของระบบ</div>
+              <div>{copy.systemLanguage}</div>
             </div>
-            <div className="flex flex-row justify-end items-center space-x-2">
-              <span className="text-sm text-gray-400">ภาษาไทย</span>
-              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path></svg>
+            <div className="flex flex-row justify-end items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setLocale('th')}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  locale === 'th'
+                    ? 'bg-[var(--ci-orange)] text-white'
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
+              >
+                {copy.thai}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLocale('en')}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  locale === 'en'
+                    ? 'bg-[var(--ci-orange)] text-white'
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
+              >
+                {copy.english}
+              </button>
             </div>
-          </button>
+          </div>
           <button className="flex items-center justify-between hover:bg-gray-100 transition-colors p-4" onClick={() => { handleLogout() }}>
             <div className="text-sm flex justify-start items-center space-x-4">
               <svg className="w-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M224 160C241.7 160 256 145.7 256 128C256 110.3 241.7 96 224 96L160 96C107 96 64 139 64 192L64 448C64 501 107 544 160 544L224 544C241.7 544 256 529.7 256 512C256 494.3 241.7 480 224 480L160 480C142.3 480 128 465.7 128 448L128 192C128 174.3 142.3 160 160 160L224 160zM566.6 342.6C579.1 330.1 579.1 309.8 566.6 297.3L438.6 169.3C426.1 156.8 405.8 156.8 393.3 169.3C380.8 181.8 380.8 202.1 393.3 214.6L466.7 288L256 288C238.3 288 224 302.3 224 320C224 337.7 238.3 352 256 352L466.7 352L393.3 425.4C380.8 437.9 380.8 458.2 393.3 470.7C405.8 483.2 426.1 483.2 438.6 470.7L566.6 342.7z"/></svg>
-              <div>ออกจากระบบ</div>
+              <div>{copy.logout}</div>
             </div>
             <div className="flex flex-row justify-end items-center space-x-2">
               {/* <span className="text-xs text-gray-400">ออกจากระบบ</span> */}
