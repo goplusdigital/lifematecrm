@@ -184,7 +184,10 @@ export async function GET(request: NextRequest) {
           ) AS image
       FROM product_variants pv
       JOIN products p ON p.id = pv."productId"
-      WHERE p.slug IS NOT NULL AND p.slug <> ''
+      WHERE 
+        pv.price IS NOT NULL AND pv.price >= 0 AND pv.price != 0 AND
+        pv.name not like '%แลกซื้อ%' and pv.name not like '%แถม%' and
+        p.slug IS NOT NULL AND p.slug <> ''
         ${hasCategoryFilter ? 'AND p."categoryId" = $1' : ''}
       ORDER BY p.id, pv.id
       `,

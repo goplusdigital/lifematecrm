@@ -1,9 +1,9 @@
 {
-  "name": "gocrm",
+  "name": "@pos/crm",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3003 -H 192.168.100.160",
+    "dev": "next dev -p 3003",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

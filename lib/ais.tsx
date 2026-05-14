@@ -1,5 +1,21 @@
 // lib/ais.ts
 
+const FETCH_TIMEOUT_MS = 30_000
+
+async function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    })
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
 export async function getAisAccessToken() {
   const params = new URLSearchParams({
     client_id: process.env.AIS_SMS_CLIENT_ID!,
@@ -7,8 +23,9 @@ export async function getAisAccessToken() {
     grant_type: 'client_credentials',
   })
 
-  const res = await fetch('https://smsapi.ais.co.th/auth/v3.2/oauth/token', {
+  const res = await fetchWithTimeout('https://smsapi.ais.co.th/auth/v3.2/oauth/token', {
     method: 'POST',
+    
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
@@ -32,7 +49,7 @@ export async function sendSMS({
 }) {
   const token = await getAisAccessToken()
 
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     'https://smsapi.ais.co.th/api/v1/nmgw/sendmsg/'+process.env.AIS_SERVICE_ID,
     {
       method: 'POST',

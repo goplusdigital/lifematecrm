@@ -1,6 +1,7 @@
 // /proxy.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
+import { publicUrl } from './lib/publicUrl'
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
 
@@ -78,7 +79,7 @@ export async function proxy(req: NextRequest) {
   // ❌ ไม่มี token → ปล่อยผ่าน
   if (!token) {
     if(pathname.startsWith('/privilege') || pathname.startsWith('/setprofile')) {
-      return NextResponse.redirect(new URL('/', req.url))
+      return NextResponse.redirect(publicUrl(req, '/'))
     }
     return NextResponse.next()
   }
@@ -89,7 +90,7 @@ export async function proxy(req: NextRequest) {
     const phone_no = payload.phone_no as string
 
     if (!phone_no) {
-      return NextResponse.redirect(new URL('/setprofile', req.url))
+      return NextResponse.redirect(publicUrl(req, '/setprofile'))
     }
 
     const exists = await checkMemberExists(req, phone_no)
@@ -99,14 +100,14 @@ export async function proxy(req: NextRequest) {
         if (pathname.startsWith('/privilege')) {
             return NextResponse.next()
         }
-      return NextResponse.redirect(new URL('/privilege', req.url))
+      return NextResponse.redirect(publicUrl(req, '/privilege'))
     } else {
-      return NextResponse.redirect(new URL('/setprofile', req.url))
+      return NextResponse.redirect(publicUrl(req, '/setprofile'))
     }
 
   } catch (err: any) {
     console.error(err)
-    const res = NextResponse.redirect(new URL('/', req.url))
+    const res = NextResponse.redirect(publicUrl(req, '/'))
     res.cookies.delete('token')
     return res
   }

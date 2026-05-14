@@ -69,19 +69,22 @@ export default function Login() {
     }
   };
 
-  const handleOtpPaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const pastedDigits = event.clipboardData.getData('text').replace(/\D/g, '').slice(0, OTP_LENGTH);
-    if (!pastedDigits) {
-      return;
-    }
+  const applyPastedOtp = (startIndex: number, pastedText: string) => {
+    const pastedDigits = pastedText.replace(/\D/g, '');
+    if (!pastedDigits) return;
 
-    const nextOtp = Array(OTP_LENGTH).fill('');
-    pastedDigits.split('').forEach((digit, idx) => {
-      nextOtp[idx] = digit;
-    });
+    const nextOtp = [...otpDigits];
+    const chars = pastedDigits.slice(0, OTP_LENGTH - startIndex).split('');
+    for (let i = 0; i < chars.length && startIndex + i < OTP_LENGTH; i++) {
+      nextOtp[startIndex + i] = chars[i];
+    }
     setOtpDigits(nextOtp);
-    focusOtpInput(Math.min(pastedDigits.length - 1, OTP_LENGTH - 1));
+    focusOtpInput(Math.min(startIndex + chars.length - 1, OTP_LENGTH - 1));
+  };
+
+  const handleOtpPaste = (startIndex: number) => (event: React.ClipboardEvent<HTMLElement>) => {
+    event.preventDefault();
+    applyPastedOtp(startIndex, event.clipboardData.getData('text'));
   };
 
   React.useEffect(() => {
@@ -239,7 +242,7 @@ export default function Login() {
           {t('text_confirm_otp', { phone: data.phone?.replace(/(\d{3})(\d{3})(\d{4})/, '$1***$3') })}
         </p>
         {/* input OTP - start */}
-        <div className="flex items-center justify-center gap-2 mb-4 w-full" onPaste={handleOtpPaste}>
+        <div className="flex items-center justify-center gap-2 mb-4 w-full" onPaste={handleOtpPaste(0)}>
           {otpDigits.map((digit, index) => (
             <input
               key={index}
@@ -255,6 +258,7 @@ export default function Login() {
               disabled={loading}
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleOtpKeyDown(index, e)}
+              onPaste={handleOtpPaste(index)}
               onFocus={(e) => e.target.select()}
               className="h-12 w-10 rounded-lg border border-[#d8d4c8] text-center text-xl font-bold font-prompt focus:outline-none focus:ring-2 focus:ring-[var(--ci-orange)] focus:border-transparent bg-white"
               aria-label={`OTP digit ${index + 1}`}

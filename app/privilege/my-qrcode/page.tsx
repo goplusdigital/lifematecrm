@@ -91,7 +91,22 @@ export default function Privilege() {
           </h1>
           <div className="text-lg font-bold font-prompt text-gray-600 mb-0">{t('member_code')}</div>
           <div className="text-xl font-bold font-prompt text-gray-600 mb-0">{memberCode}</div>
-          {(!loading) ? <QrcodeCanvas
+          {(!loading) ? <><QRCodeImage
+           text={qrCodeUrl}  
+           options={{
+            type: 'image/jpeg',
+            quality: 1,
+            errorCorrectionLevel: 'L',
+            margin: 4,
+            scale: 4,
+            width: 300,
+            color: {
+              dark: '#443722',
+              light: '#ffffff'
+            }
+           }}
+           />
+           {/* <QrcodeCanvas
             value={qrCodeUrl}
             variant={{
               eyes: 'gravity',
@@ -112,7 +127,8 @@ export default function Privilege() {
             bgColor='#ffffff'
             bgRounded
             divider
-          /> : <QRCodeLoaderPro size={260} cells={33} seed={123} />}
+          /> */}
+          </> : <><QRCodeLoaderPro size={260} cells={33} seed={123} /></>}
           {/* show countdown */}
           {countdown > 0 && <div className="text-sm font-prompt text-gray-600">
             {`${t('qr_expires_in')} ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}`}

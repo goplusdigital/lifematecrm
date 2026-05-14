@@ -50,11 +50,11 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
 
   const doContinue = () => {
     // validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email && !emailRegex.test(email)) {
-      setError(t('error_invalid_email'));
-      return;
-    }
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (email && !emailRegex.test(email)) {
+    //   setError(t('error_invalid_email'));
+    //   return;
+    // }
     // validate fullname    
     if (fullname.trim().length === 0) {
       setError(t('error_fullname_required'));
@@ -193,7 +193,7 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
         {/* input email - start */}
         <div className="w-full">
           <label className="block text-gray-700 font-prompt text-sm mb-2" htmlFor="email">
-            {t('input_email')} <i className="text-red-500">*</i>
+            {t('input_email')}
           </label>
           <input
             type="email"
@@ -240,7 +240,7 @@ export default function RegisterForm({ phone , token }: { phone: any , token: an
         {/* select gender - end */}
         {/* button continue - start */}
         <button
-          disabled={loading || !fullname || !email}
+          disabled={loading || !fullname }
           onClick={() => { doContinue() }}
           className="ci-btn-primary w-full text-white font-bold py-3 px-4 rounded-lg transition-colors font-prompt disabled:opacity-50">
           {loading && <Spinner className="mr-2" size="sm" light />}

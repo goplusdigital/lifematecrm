@@ -187,6 +187,8 @@ export async function GET() {
       FROM product_variants pv
       JOIN products p
           ON p.id = pv."productId"
+      WHERE pv.price IS NOT NULL AND pv.price >= 0 AND pv.price != 0 AND
+      pv.name not like '%แลกซื้อ%' and pv.name not like '%แถม%'
       ORDER BY RANDOM()
       LIMIT 8
       `

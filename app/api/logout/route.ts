@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { publicUrl } from '@/lib/publicUrl'
 
 export async function POST() {
   const res = NextResponse.json({ success: true })
@@ -14,10 +15,11 @@ export async function POST() {
   return res
 }
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
+export async function GET(req: NextRequest) {
+  const { searchParams } = req.nextUrl
   const next = searchParams.get('next') || '/'
-  const res = NextResponse.redirect(new URL(next, req.url))
+  const redirectUrl = next.startsWith('http://') || next.startsWith('https://') ? next : publicUrl(req, next)
+  const res = NextResponse.redirect(redirectUrl)
 
   res.cookies.set('token', '', {
     httpOnly: true,
